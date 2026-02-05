@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  body {
+    @apply bg-quest-dark text-white antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-quest-dark;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-quest-card rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-quest-hover;
+  }
+}
+
+@layer components {
+  .quest-card {
+    @apply bg-quest-card rounded-2xl border border-white/5 transition-all duration-300;
+  }
+  
+  .quest-card:hover {
+    @apply border-white/10 shadow-lg;
+  }
+  
+  .glow-amber {
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+  }
+  
+  .glow-violet {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+  }
+  
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+  }
+  
+  .nav-link {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/5;
+  }
+  
+  .nav-link.active {
+    @apply text-white bg-white/10;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg font-medium transition-colors text-sm;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg font-medium transition-colors text-sm border border-white/10;
+  }
+  
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 rounded-lg font-medium transition-colors text-sm border border-red-500/20;
+  }
+  
+  .input-field {
+    @apply w-full bg-quest-dark border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all;
+  }
+  
+  .select-field {
+    @apply w-full bg-quest-dark border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all appearance-none;
+  }
+}
+
+/* Particle effects for main quest */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f59e0b;
+  opacity: 0;
+  animation: particle-rise 3s ease-in-out infinite;
+}
+
+.particle:nth-child(1) { left: 15%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 35%; animation-delay: 0.6s; }
+.particle:nth-child(3) { left: 55%; animation-delay: 1.2s; }
+.particle:nth-child(4) { left: 75%; animation-delay: 1.8s; }
+.particle:nth-child(5) { left: 90%; animation-delay: 2.4s; }
+
+@keyframes particle-rise {
+  0% { transform: translateY(60px); opacity: 0; }
+  30% { opacity: 0.8; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+/* Celebration overlay */
+.celebration-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Recharts customization */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.05) !important;
+}

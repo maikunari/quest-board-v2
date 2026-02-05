@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+enum QuestType {
+  main
+  side
+  daily
+}
+
+model Quest {
+  id          String      @id @default(cuid())
+  date        DateTime    @db.Date
+  type        QuestType
+  title       String
+  subtitle    String?
+  description String?
+  icon        String      @default("⚔️")
+  points      Int
+  asanaTaskId String?
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  completions Completion[]
+
+  @@index([date])
+  @@index([type])
+  @@index([asanaTaskId])
+}
+
+model Completion {
+  id          String   @id @default(cuid())
+  visitorId   String   @default("default")
+  questId     String
+  date        DateTime @db.Date
+  completedAt DateTime @default(now())
+
+  quest Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@unique([visitorId, questId, date])
+  @@index([date])
+  @@index([questId])
+}
+
+model DayStats {
+  id              String   @id @default(cuid())
+  date            DateTime @unique @db.Date
+  totalPoints     Int      @default(0)
+  questsCompleted Int      @default(0)
+  questsTotal     Int      @default(0)
+  updatedAt       DateTime @updatedAt
+
+  @@index([date])
+}

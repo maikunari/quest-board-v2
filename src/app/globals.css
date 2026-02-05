@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply bg-quest-dark text-white antialiased;
+    @apply antialiased;
     font-family: 'Inter', system-ui, sans-serif;
   }
   
@@ -15,25 +15,25 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-quest-dark;
+    @apply bg-quest-light-bg dark:bg-quest-dark;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-quest-card rounded-full;
+    @apply bg-slate-300 dark:bg-quest-card rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-quest-hover;
+    @apply bg-slate-400 dark:bg-quest-hover;
   }
 }
 
 @layer components {
   .quest-card {
-    @apply bg-quest-card rounded-2xl border border-white/5 transition-all duration-300;
+    @apply bg-white dark:bg-quest-card rounded-2xl border border-slate-200 dark:border-white/5 transition-all duration-300 shadow-sm dark:shadow-none;
   }
   
   .quest-card:hover {
-    @apply border-white/10 shadow-lg;
+    @apply border-slate-300 dark:border-white/10 shadow-md dark:shadow-lg;
   }
   
   .glow-amber {
@@ -49,31 +49,31 @@
   }
   
   .nav-link {
-    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/5;
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5;
   }
   
   .nav-link.active {
-    @apply text-white bg-white/10;
+    @apply text-slate-900 dark:text-white bg-slate-100 dark:bg-white/10;
   }
   
   .btn-primary {
-    @apply px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg font-medium transition-colors text-sm;
+    @apply px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg font-medium transition-colors text-sm text-white;
   }
   
   .btn-secondary {
-    @apply px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg font-medium transition-colors text-sm border border-white/10;
+    @apply px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-lg font-medium transition-colors text-sm border border-slate-200 dark:border-white/10;
   }
   
   .btn-danger {
-    @apply px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 rounded-lg font-medium transition-colors text-sm border border-red-500/20;
+    @apply px-4 py-2 bg-red-50 dark:bg-red-600/20 hover:bg-red-100 dark:hover:bg-red-600/40 text-red-600 dark:text-red-400 rounded-lg font-medium transition-colors text-sm border border-red-200 dark:border-red-500/20;
   }
   
   .input-field {
-    @apply w-full bg-quest-dark border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all;
+    @apply w-full bg-white dark:bg-quest-dark border border-slate-200 dark:border-white/10 rounded-lg px-4 py-2.5 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 dark:focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all;
   }
   
   .select-field {
-    @apply w-full bg-quest-dark border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all appearance-none;
+    @apply w-full bg-white dark:bg-quest-dark border border-slate-200 dark:border-white/10 rounded-lg px-4 py-2.5 text-slate-800 dark:text-white focus:outline-none focus:border-violet-500 dark:focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all appearance-none;
   }
 }
 

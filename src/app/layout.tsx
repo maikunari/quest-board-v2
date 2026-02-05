@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Navigation from '@/components/Navigation'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 export const metadata: Metadata = {
   title: 'Quest Board ⚔️',
@@ -16,12 +17,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen">
-        <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-          {children}
-        </main>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-quest-light-bg dark:bg-quest-dark text-slate-800 dark:text-white">
+        <ThemeProvider>
+          <Navigation />
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   )

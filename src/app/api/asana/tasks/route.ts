@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'ASANA_TOKEN not configured' }, { status: 400 })
     }
 
-    // Fetch more tasks with limit
+    // Fetch all incomplete tasks (not completed)
     const response = await fetch(
-      `https://app.asana.com/api/1.0/tasks?assignee=${userGid}&workspace=${workspaceGid}&opt_fields=name,due_on,completed,notes,projects.name&completed_since=now&limit=100`,
+      `https://app.asana.com/api/1.0/tasks?assignee=${userGid}&workspace=${workspaceGid}&opt_fields=name,due_on,completed,notes,projects.name&limit=100`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -29,15 +29,17 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json()
 
-    // Map to quest-friendly format
-    const tasks = data.data.map((task: any) => ({
-      gid: task.gid,
-      name: task.name,
-      notes: task.notes || '',
-      dueOn: task.due_on,
-      completed: task.completed,
-      project: task.projects?.[0]?.name || 'No Project',
-    }))
+    // Map to quest-friendly format, filter out completed tasks
+    const tasks = data.data
+      .filter((task: any) => !task.completed)
+      .map((task: any) => ({
+        gid: task.gid,
+        name: task.name,
+        notes: task.notes || '',
+        dueOn: task.due_on,
+        completed: task.completed,
+        project: task.projects?.[0]?.name || 'No Project',
+      }))
 
     // Sort by: tasks with due dates first (closest first), then tasks without due dates
     tasks.sort((a: any, b: any) => {

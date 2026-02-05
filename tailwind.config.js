@@ -29,7 +29,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        pixel: ['"Press Start 2P"', 'cursive'],
+        pixel: ['var(--font-pixel)', '"Press Start 2P"', 'cursive'],
       },
       animation: {
         'float': 'float 3s ease-in-out infinite',

@@ -1,7 +1,14 @@
 import type { Metadata } from 'next'
+import { Press_Start_2P } from 'next/font/google'
 import './globals.css'
 import Navigation from '@/components/Navigation'
 import { ThemeProvider } from '@/components/ThemeProvider'
+
+const pressStart = Press_Start_2P({ 
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-pixel',
+})
 
 export const metadata: Metadata = {
   title: 'Quest Board ⚔️',
@@ -17,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={pressStart.variable}>
       <body className="min-h-screen bg-quest-light-bg dark:bg-quest-dark text-slate-800 dark:text-white">
         <ThemeProvider>
           <Navigation />

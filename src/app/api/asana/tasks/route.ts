@@ -5,15 +5,28 @@ export async function GET(request: NextRequest) {
   try {
     const token = process.env.ASANA_TOKEN
     const workspaceGid = process.env.ASANA_WORKSPACE_GID || '1211778541088357'
-    const userGid = process.env.ASANA_USER_GID || '1213014189296449'
 
     if (!token) {
       return NextResponse.json({ error: 'ASANA_TOKEN not configured' }, { status: 400 })
     }
 
-    // Fetch all incomplete tasks (not completed)
+    // First, get the user's task list for this workspace
+    const meRes = await fetch(
+      `https://app.asana.com/api/1.0/users/me/user_task_list?workspace=${workspaceGid}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    
+    if (!meRes.ok) {
+      console.error('Failed to get user task list')
+      return NextResponse.json({ error: 'Failed to get user task list' }, { status: 502 })
+    }
+    
+    const meData = await meRes.json()
+    const userTaskListGid = meData.data.gid
+
+    // Fetch tasks from user's task list
     const response = await fetch(
-      `https://app.asana.com/api/1.0/tasks?assignee=${userGid}&workspace=${workspaceGid}&opt_fields=name,due_on,completed,notes,projects.name&limit=100`,
+      `https://app.asana.com/api/1.0/user_task_lists/${userTaskListGid}/tasks?opt_fields=name,due_on,completed,notes,projects.name&limit=100`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

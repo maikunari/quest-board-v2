@@ -266,7 +266,7 @@ export default function AdminPage() {
                 {asanaTasks.map(task => (
                   <div
                     key={task.gid}
-                    className="flex items-center justify-between bg-quest-dark rounded-lg p-3"
+                    className="flex items-center justify-between bg-slate-100 dark:bg-quest-dark rounded-lg p-3"
                   >
                     <div>
                       <div className="text-sm font-medium">{task.name}</div>
@@ -363,7 +363,7 @@ export default function AdminPage() {
                       className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-all ${
                         editingQuest.icon === emoji
                           ? 'bg-violet-600 ring-2 ring-violet-400'
-                          : 'bg-quest-dark hover:bg-quest-hover'
+                          : 'bg-slate-100 hover:bg-slate-200 dark:bg-quest-dark dark:hover:bg-quest-hover'
                       }`}
                     >
                       {emoji}

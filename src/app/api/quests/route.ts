@@ -14,6 +14,33 @@ export async function GET(request: NextRequest) {
 
     if (dateStr) {
       where.date = new Date(dateStr)
+      
+      // Auto-create dailies from templates if none exist for this date
+      const existingDailies = await prisma.quest.count({
+        where: { date: new Date(dateStr), type: 'daily' }
+      })
+      
+      if (existingDailies === 0) {
+        const templates = await prisma.dailyTemplate.findMany({
+          where: { active: true },
+          orderBy: { order: 'asc' },
+        })
+        
+        if (templates.length > 0) {
+          await prisma.quest.createMany({
+            data: templates.map(t => ({
+              date: new Date(dateStr),
+              type: 'daily' as const,
+              title: t.title,
+              subtitle: t.subtitle,
+              description: t.description,
+              icon: t.icon,
+              points: t.points,
+              order: t.order,
+            })),
+          })
+        }
+      }
     }
 
     if (type) {

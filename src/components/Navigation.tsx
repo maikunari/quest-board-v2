@@ -9,6 +9,7 @@ const links = [
   { href: '/admin', label: '🛠️ Admin', key: 'admin' },
   { href: '/history', label: '📜 History', key: 'history' },
   { href: '/stats', label: '📊 Stats', key: 'stats' },
+  { href: '/settings', label: '⚙️ Settings', key: 'settings' },
 ]
 
 export default function Navigation() {

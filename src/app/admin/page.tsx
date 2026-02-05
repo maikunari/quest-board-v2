@@ -46,6 +46,7 @@ export default function AdminPage() {
   const [asanaTasks, setAsanaTasks] = useState<AsanaTask[]>([])
   const [showAsana, setShowAsana] = useState(false)
   const [asanaLoading, setAsanaLoading] = useState(false)
+  const [asanaFilter, setAsanaFilter] = useState<string>('all')
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
 
@@ -255,24 +256,40 @@ export default function AdminPage() {
           >
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-sm">📥 Asana Tasks</h3>
-              <button onClick={() => setShowAsana(false)} className="text-slate-500 hover:text-white text-sm">
-                ✕ Close
-              </button>
+              <div className="flex items-center gap-2">
+                <select
+                  value={asanaFilter}
+                  onChange={(e) => setAsanaFilter(e.target.value)}
+                  className="select-field text-xs py-1"
+                >
+                  <option value="all">All Projects</option>
+                  {Array.from(new Set(asanaTasks.map(t => t.project))).sort().map(proj => (
+                    <option key={proj} value={proj}>{proj}</option>
+                  ))}
+                </select>
+                <button onClick={() => setShowAsana(false)} className="text-slate-500 hover:text-slate-900 dark:hover:text-white text-sm">
+                  ✕
+                </button>
+              </div>
             </div>
             {asanaTasks.length === 0 ? (
               <p className="text-slate-500 text-sm">No uncompleted tasks found.</p>
             ) : (
               <div className="space-y-2 max-h-60 overflow-y-auto">
-                {asanaTasks.map(task => (
+                {asanaTasks
+                  .filter(task => asanaFilter === 'all' || task.project === asanaFilter)
+                  .map(task => (
                   <div
                     key={task.gid}
                     className="flex items-center justify-between bg-slate-100 dark:bg-quest-dark rounded-lg p-3"
                   >
-                    <div>
-                      <div className="text-sm font-medium">{task.name}</div>
-                      <div className="text-xs text-slate-500">{task.project} {task.dueOn ? `• Due ${task.dueOn}` : ''}</div>
+                    <div className="flex-1 min-w-0 mr-3">
+                      <div className="text-sm font-medium truncate">{task.name}</div>
+                      <div className="text-xs text-slate-500">
+                        {task.project} {task.dueOn ? `• Due ${task.dueOn}` : '• No due date'}
+                      </div>
                     </div>
-                    <button onClick={() => importAsanaTask(task)} className="btn-primary text-xs px-3 py-1">
+                    <button onClick={() => importAsanaTask(task)} className="btn-primary text-xs px-3 py-1 shrink-0">
                       Import
                     </button>
                   </div>

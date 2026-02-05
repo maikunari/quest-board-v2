@@ -11,8 +11,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'ASANA_TOKEN not configured' }, { status: 400 })
     }
 
+    // Fetch more tasks with limit
     const response = await fetch(
-      `https://app.asana.com/api/1.0/tasks?assignee=${userGid}&workspace=${workspaceGid}&opt_fields=name,due_on,completed,notes,projects.name&completed_since=now`,
+      `https://app.asana.com/api/1.0/tasks?assignee=${userGid}&workspace=${workspaceGid}&opt_fields=name,due_on,completed,notes,projects.name&completed_since=now&limit=100`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -35,8 +36,16 @@ export async function GET(request: NextRequest) {
       notes: task.notes || '',
       dueOn: task.due_on,
       completed: task.completed,
-      project: task.projects?.[0]?.name || 'Uncategorized',
+      project: task.projects?.[0]?.name || 'No Project',
     }))
+
+    // Sort by: tasks with due dates first (closest first), then tasks without due dates
+    tasks.sort((a: any, b: any) => {
+      if (!a.dueOn && !b.dueOn) return 0
+      if (!a.dueOn) return 1
+      if (!b.dueOn) return -1
+      return new Date(a.dueOn).getTime() - new Date(b.dueOn).getTime()
+    })
 
     return NextResponse.json(tasks)
   } catch (error) {

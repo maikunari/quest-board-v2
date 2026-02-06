@@ -5,24 +5,44 @@ import crypto from 'crypto'
 // Asana webhook endpoint
 // Docs: https://developers.asana.com/docs/webhooks
 
+// Store the webhook secret (set during handshake, stored in env)
+// For production, you'd store this in DB when webhook is created
+
 export async function POST(request: NextRequest) {
   try {
     // Handle webhook handshake (Asana verification)
     const hookSecret = request.headers.get('x-hook-secret')
     if (hookSecret) {
       // Initial handshake - echo back the secret
-      console.log('Asana webhook handshake received')
+      // NOTE: Save this secret! You need it to verify future webhooks
+      // For now we log it - add ASANA_WEBHOOK_SECRET env var with this value
+      console.log('=== ASANA WEBHOOK SECRET (save this!) ===')
+      console.log(hookSecret)
+      console.log('==========================================')
       return new NextResponse(null, {
         status: 200,
         headers: { 'X-Hook-Secret': hookSecret },
       })
     }
 
-    // Verify signature
-    const signature = request.headers.get('x-hook-signature')
     const body = await request.text()
     
-    // For now, process without strict verification (can add later with stored secret)
+    // Verify signature if we have the secret
+    const signature = request.headers.get('x-hook-signature')
+    const webhookSecret = process.env.ASANA_WEBHOOK_SECRET
+    
+    if (webhookSecret && signature) {
+      const expectedSig = crypto
+        .createHmac('sha256', webhookSecret)
+        .update(body)
+        .digest('hex')
+      
+      if (signature !== expectedSig) {
+        console.error('Webhook signature mismatch!')
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+      }
+    }
+    
     const payload = JSON.parse(body)
     console.log('Asana webhook event:', JSON.stringify(payload, null, 2))
 

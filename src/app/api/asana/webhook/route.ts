@@ -102,6 +102,18 @@ export async function GET() {
   return NextResponse.json({ status: 'Asana webhook endpoint ready' })
 }
 
+// Handle OPTIONS for CORS
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Hook-Secret, X-Hook-Signature',
+    },
+  })
+}
+
 async function updateDayStats(date: Date) {
   const quests = await prisma.quest.findMany({
     where: { date },

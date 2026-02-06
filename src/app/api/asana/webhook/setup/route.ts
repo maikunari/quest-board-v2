@@ -28,10 +28,13 @@ export async function POST(request: NextRequest) {
     const taskListData = await taskListRes.json()
     const resourceGid = taskListData.data.gid
 
-    // Register webhook
-    const targetUrl = webhookUrl.startsWith('http') 
-      ? `${webhookUrl}/api/asana/webhook`
-      : `https://${webhookUrl}/api/asana/webhook`
+    // Register webhook - ensure clean URL without trailing slashes
+    const baseUrl = webhookUrl.replace(/\/$/, '')
+    const targetUrl = baseUrl.startsWith('http') 
+      ? `${baseUrl}/api/asana/webhook`
+      : `https://${baseUrl}/api/asana/webhook`
+    
+    console.log('Registering webhook to:', targetUrl)
 
     const webhookRes = await fetch('https://app.asana.com/api/1.0/webhooks', {
       method: 'POST',

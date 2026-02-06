@@ -155,16 +155,16 @@ export default function QuestBoard() {
         {/* Right Column - Side & Daily */}
         <div className="space-y-6">
           {/* Side Quests */}
-          <div>
+          <div className="quest-card p-4 border-l-4 border-l-violet-500">
             <h2 className="text-violet-400 font-semibold text-sm mb-3 flex items-center gap-2">
               <span>⚔️</span> Side Quests
-              <span className="text-slate-600 text-xs">
+              <span className="text-slate-500 dark:text-slate-400 text-xs">
                 ({sideQuests.filter(q => completedIds.has(q.id)).length}/{sideQuests.length})
               </span>
             </h2>
             <div className="space-y-2">
               {sideQuests.length === 0 ? (
-                <div className="quest-card p-4 text-center text-slate-500 text-sm border border-dashed border-violet-500/20">
+                <div className="p-4 text-center text-slate-400 text-sm border border-dashed border-violet-500/30 rounded-lg">
                   No side quests today
                 </div>
               ) : (
@@ -182,16 +182,16 @@ export default function QuestBoard() {
           </div>
 
           {/* Daily Quests */}
-          <div>
+          <div className="quest-card p-4 border-l-4 border-l-cyan-500">
             <h2 className="text-cyan-400 font-semibold text-sm mb-3 flex items-center gap-2">
               <span>📋</span> Daily Quests
-              <span className="text-slate-600 text-xs">
+              <span className="text-slate-500 dark:text-slate-400 text-xs">
                 ({dailyQuests.filter(q => completedIds.has(q.id)).length}/{dailyQuests.length})
               </span>
             </h2>
             <div className="space-y-2">
               {dailyQuests.length === 0 ? (
-                <div className="quest-card p-4 text-center text-slate-500 text-sm border border-dashed border-cyan-500/20">
+                <div className="p-4 text-center text-slate-400 text-sm border border-dashed border-cyan-500/30 rounded-lg">
                   No daily quests today
                 </div>
               ) : (

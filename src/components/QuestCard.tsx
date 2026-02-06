@@ -45,7 +45,7 @@ export default function QuestCard({ quest, isCompleted, onToggle, index }: Quest
 
   return (
     <motion.div
-      className={`quest-card border ${colors.border} ${colors.borderHover} flex items-center gap-4 p-4 cursor-pointer ${
+      className={`bg-slate-50 dark:bg-quest-hover/50 rounded-xl border ${colors.border} ${colors.borderHover} flex items-center gap-4 p-4 cursor-pointer ${
         isCompleted ? 'opacity-60' : ''
       }`}
       onClick={() => onToggle(quest.id)}

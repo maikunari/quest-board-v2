@@ -39,14 +39,9 @@ export default function MainQuestCard({ quest, isCompleted, onToggle }: MainQues
     <motion.div
       className={`quest-card border-2 cursor-pointer relative overflow-hidden min-h-[400px] flex flex-col ${
         isCompleted
-          ? 'border-quest-green/40 opacity-80'
-          : 'border-amber-500/30 hover:border-amber-500/60'
+          ? 'border-quest-green/40 opacity-80 bg-gradient-to-br from-slate-100 to-green-50 dark:from-[#1a1333] dark:to-green-900/10'
+          : 'border-amber-500/30 hover:border-amber-500/60 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-[#1a1333] dark:to-amber-900/10'
       }`}
-      style={{
-        background: isCompleted
-          ? 'linear-gradient(135deg, #1a1333 0%, rgba(34, 197, 94, 0.08) 100%)'
-          : 'linear-gradient(135deg, #1a1333 0%, rgba(245, 158, 11, 0.08) 100%)',
-      }}
       onClick={() => onToggle(quest.id)}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}

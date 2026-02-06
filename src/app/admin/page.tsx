@@ -316,7 +316,11 @@ export default function AdminPage() {
                 <label className="block text-xs text-slate-500 mb-1">Type</label>
                 <select
                   value={editingQuest.type || 'side'}
-                  onChange={(e) => setEditingQuest({ ...editingQuest, type: e.target.value as Quest['type'] })}
+                  onChange={(e) => {
+                    const newType = e.target.value as Quest['type']
+                    const defaultPoints = newType === 'main' ? 20 : newType === 'side' ? 5 : 3
+                    setEditingQuest({ ...editingQuest, type: newType, points: defaultPoints })
+                  }}
                   className="select-field"
                 >
                   <option value="main">🏰 Main Quest (20 pts)</option>

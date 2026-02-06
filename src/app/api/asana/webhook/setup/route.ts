@@ -97,3 +97,38 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to list webhooks' }, { status: 500 })
   }
 }
+
+// DELETE - Remove a webhook
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = process.env.ASANA_TOKEN
+    const { searchParams } = new URL(request.url)
+    const webhookGid = searchParams.get('gid')
+
+    if (!token) {
+      return NextResponse.json({ error: 'ASANA_TOKEN not configured' }, { status: 400 })
+    }
+
+    if (!webhookGid) {
+      return NextResponse.json({ error: 'gid required' }, { status: 400 })
+    }
+
+    const res = await fetch(
+      `https://app.asana.com/api/1.0/webhooks/${webhookGid}`,
+      {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+
+    if (!res.ok) {
+      const err = await res.text()
+      return NextResponse.json({ error: 'Failed to delete', details: err }, { status: 502 })
+    }
+
+    return NextResponse.json({ success: true, deleted: webhookGid })
+  } catch (error) {
+    console.error('Error deleting webhook:', error)
+    return NextResponse.json({ error: 'Failed to delete webhook' }, { status: 500 })
+  }
+}

@@ -95,7 +95,7 @@ export default function MainQuestCard({ quest, isCompleted, onToggle }: MainQues
 
         {/* Title */}
         <div className="text-center flex-1">
-          <h3 className={`text-xl font-bold mb-2 ${isCompleted ? 'line-through text-slate-400' : 'text-white'}`}>
+          <h3 className={`text-xl font-bold mb-2 ${isCompleted ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'}`}>
             {quest.title}
           </h3>
           {quest.subtitle && (

@@ -65,7 +65,7 @@ export default function QuestCard({ quest, isCompleted, onToggle, index }: Quest
       >
         {isCompleted && (
           <motion.span
-            className="text-white text-sm font-bold"
+            className="text-slate-900 dark:text-white text-sm font-bold"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', damping: 15, stiffness: 400 }}
@@ -80,7 +80,7 @@ export default function QuestCard({ quest, isCompleted, onToggle, index }: Quest
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className={`font-semibold text-sm ${isCompleted ? 'line-through text-slate-400' : 'text-white'}`}>
+        <div className={`font-semibold text-sm ${isCompleted ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'}`}>
           {quest.title}
         </div>
         {quest.subtitle && (

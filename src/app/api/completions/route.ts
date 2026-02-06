@@ -85,12 +85,15 @@ export async function POST(request: NextRequest) {
     // Also complete in Asana if linked
     const quest = await prisma.quest.findUnique({ where: { id: questId } })
     if (quest?.asanaTaskId && process.env.ASANA_TOKEN) {
-      // Fire and forget
-      fetch(`${process.env.NEXT_PUBLIC_URL || ''}/api/asana/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taskGid: quest.asanaTaskId }),
-      }).catch(() => {})
+      // Call Asana API directly (fire and forget)
+      fetch(`https://app.asana.com/api/1.0/tasks/${quest.asanaTaskId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${process.env.ASANA_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: { completed: true } }),
+      }).catch((err) => console.error('Asana complete failed:', err))
     }
 
     await updateDayStats(dateObj)

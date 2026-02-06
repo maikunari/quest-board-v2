@@ -48,6 +48,19 @@ export async function POST(request: NextRequest) {
         },
       })
 
+      // Also uncomplete in Asana if linked
+      const quest = await prisma.quest.findUnique({ where: { id: questId } })
+      if (quest?.asanaTaskId && process.env.ASANA_TOKEN) {
+        fetch(`https://app.asana.com/api/1.0/tasks/${quest.asanaTaskId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${process.env.ASANA_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: { completed: false } }),
+        }).catch((err) => console.error('Asana uncomplete failed:', err))
+      }
+
       // Update day stats
       await updateDayStats(dateObj)
 
@@ -66,6 +79,20 @@ export async function POST(request: NextRequest) {
     if (existing) {
       // Toggle off
       await prisma.completion.delete({ where: { id: existing.id } })
+      
+      // Also uncomplete in Asana if linked
+      const quest = await prisma.quest.findUnique({ where: { id: questId } })
+      if (quest?.asanaTaskId && process.env.ASANA_TOKEN) {
+        fetch(`https://app.asana.com/api/1.0/tasks/${quest.asanaTaskId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${process.env.ASANA_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: { completed: false } }),
+        }).catch((err) => console.error('Asana uncomplete failed:', err))
+      }
+      
       await updateDayStats(dateObj)
       return NextResponse.json({ completed: false })
     }

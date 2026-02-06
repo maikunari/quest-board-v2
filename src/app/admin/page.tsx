@@ -318,14 +318,13 @@ export default function AdminPage() {
                   value={editingQuest.type || 'side'}
                   onChange={(e) => {
                     const newType = e.target.value as Quest['type']
-                    const defaultPoints = newType === 'main' ? 20 : newType === 'side' ? 5 : 3
+                    const defaultPoints = newType === 'main' ? 20 : 5
                     setEditingQuest(prev => ({ ...prev, type: newType, points: defaultPoints }))
                   }}
                   className="select-field"
                 >
                   <option value="main">🏰 Main Quest</option>
                   <option value="side">⚔️ Side Quest</option>
-                  <option value="daily">📋 Daily Quest</option>
                 </select>
               </div>
 

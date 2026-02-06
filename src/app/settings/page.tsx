@@ -14,7 +14,7 @@ interface DailyTemplate {
   active: boolean
 }
 
-const emojiOptions = ['📧', '📋', '🎯', '💬', '📊', '🧹', '💪', '📝', '🔔', '☕', '🏃', '💡', '📱', '🎮', '🎸', '🌅']
+const emojiOptions = ['⚔️', '🏰', '🎯', '🚀', '💻', '📧', '📊', '🎨', '📝', '🔧', '🌐', '📱', '🎮', '💡', '🔥', '⭐', '🎪', '🛡️', '📚', '🧹']
 
 const defaultTemplate = {
   title: '',
@@ -147,34 +147,32 @@ export default function SettingsPage() {
                     placeholder="e.g., Emails, messages, tickets"
                   />
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-xs text-slate-500 mb-1">Points</label>
-                    <input
-                      type="number"
-                      value={editing.points || 3}
-                      onChange={(e) => setEditing({ ...editing, points: parseInt(e.target.value) || 3 })}
-                      className="input-field"
-                      min={1}
-                      max={20}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-slate-500 mb-1">Icon</label>
-                    <div className="flex flex-wrap gap-1">
-                      {emojiOptions.map(emoji => (
-                        <button
-                          key={emoji}
-                          onClick={() => setEditing({ ...editing, icon: emoji })}
-                          className={`w-8 h-8 rounded flex items-center justify-center ${
-                            editing.icon === emoji ? 'bg-violet-600 ring-2 ring-violet-400' : 'bg-slate-200 dark:bg-quest-hover'
-                          }`}
-                        >
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">Points</label>
+                  <input
+                    type="number"
+                    value={editing.points || 3}
+                    onChange={(e) => setEditing({ ...editing, points: parseInt(e.target.value) || 3 })}
+                    className="input-field w-24"
+                    min={1}
+                    max={20}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1">Icon</label>
+                  <div className="flex flex-wrap gap-1 max-w-xs">
+                    {emojiOptions.map(emoji => (
+                      <button
+                        key={emoji}
+                        onClick={() => setEditing({ ...editing, icon: emoji })}
+                        className={`w-8 h-8 rounded flex items-center justify-center ${
+                          editing.icon === emoji ? 'bg-violet-600 ring-2 ring-violet-400' : 'bg-slate-200 dark:bg-quest-hover'
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                                      </div>
                 </div>
                 <div className="flex gap-2 pt-2">
                   <button onClick={saveTemplate} className="btn-primary" disabled={saving || !editing.title}>

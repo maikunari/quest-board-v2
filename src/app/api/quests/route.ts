@@ -15,20 +15,26 @@ export async function GET(request: NextRequest) {
     if (dateStr) {
       where.date = new Date(dateStr)
       
-      // Auto-create dailies from templates if none exist for this date
-      const existingDailies = await prisma.quest.count({
-        where: { date: new Date(dateStr), type: 'daily' }
+      // Auto-create dailies from templates - sync any missing ones
+      const templates = await prisma.dailyTemplate.findMany({
+        where: { active: true },
+        orderBy: { order: 'asc' },
       })
       
-      if (existingDailies === 0) {
-        const templates = await prisma.dailyTemplate.findMany({
-          where: { active: true },
-          orderBy: { order: 'asc' },
+      if (templates.length > 0) {
+        // Get existing daily titles for this date
+        const existingDailies = await prisma.quest.findMany({
+          where: { date: new Date(dateStr), type: 'daily' },
+          select: { title: true }
         })
+        const existingTitles = new Set(existingDailies.map(d => d.title))
         
-        if (templates.length > 0) {
+        // Create any missing dailies
+        const missingTemplates = templates.filter(t => !existingTitles.has(t.title))
+        
+        if (missingTemplates.length > 0) {
           await prisma.quest.createMany({
-            data: templates.map(t => ({
+            data: missingTemplates.map(t => ({
               date: new Date(dateStr),
               type: 'daily' as const,
               title: t.title,

@@ -13,6 +13,8 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.37.3",
+    "@clerk/themes": "^2.4.51",
     "@prisma/client": "^5.22.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.11.0",

@@ -1,232 +1,48 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import StatsBar from '@/components/StatsBar'
-import MainQuestCard from '@/components/MainQuestCard'
-import QuestCard from '@/components/QuestCard'
-import CompletionAnimation from '@/components/CompletionAnimation'
-import { formatDisplayDate, getToday } from '@/lib/utils'
+import Link from 'next/link'
+import { useAuth } from '@clerk/nextjs'
 
-interface Quest {
-  id: string
-  date: string
-  type: 'main' | 'side' | 'daily'
-  title: string
-  subtitle?: string | null
-  description?: string | null
-  icon: string
-  points: number
-  asanaTaskId?: string | null
-  order: number
-  completions: Array<{ id: string }>
-}
-
-interface Stats {
-  todayPoints: number
-  weekPoints: number
-  streak: number
-}
-
-export default function QuestBoard() {
-  const [quests, setQuests] = useState<Quest[]>([])
-  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set())
-  const [stats, setStats] = useState<Stats>({ todayPoints: 0, weekPoints: 0, streak: 0 })
-  const [celebration, setCelebration] = useState<{ show: boolean; points: number }>({ show: false, points: 0 })
-  const [loading, setLoading] = useState(true)
-
-  const today = getToday()
-
-  const fetchData = useCallback(async () => {
-    try {
-      const [questsRes, statsRes] = await Promise.all([
-        fetch(`/api/quests?date=${today}`),
-        fetch('/api/stats'),
-      ])
-
-      const questsData = await questsRes.json()
-      const statsData = await statsRes.json()
-
-      setQuests(questsData)
-      setCompletedIds(new Set(
-        questsData
-          .filter((q: Quest) => q.completions.length > 0)
-          .map((q: Quest) => q.id)
-      ))
-      setStats({
-        todayPoints: statsData.todayPoints,
-        weekPoints: statsData.weekPoints,
-        streak: statsData.streak,
-      })
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [today])
-
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
-
-  const toggleQuest = async (questId: string) => {
-    const quest = quests.find(q => q.id === questId)
-    if (!quest) return
-
-    const wasCompleted = completedIds.has(questId)
-
-    // Optimistic update
-    const newCompleted = new Set(completedIds)
-    if (wasCompleted) {
-      newCompleted.delete(questId)
-      setStats(prev => ({
-        ...prev,
-        todayPoints: prev.todayPoints - quest.points,
-        weekPoints: prev.weekPoints - quest.points,
-      }))
-    } else {
-      newCompleted.add(questId)
-      setStats(prev => ({
-        ...prev,
-        todayPoints: prev.todayPoints + quest.points,
-        weekPoints: prev.weekPoints + quest.points,
-      }))
-      setCelebration({ show: true, points: quest.points })
-    }
-    setCompletedIds(newCompleted)
-
-    // Persist
-    try {
-      await fetch('/api/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          questId,
-          date: today,
-          completed: !wasCompleted,
-        }),
-      })
-    } catch (error) {
-      console.error('Error toggling quest:', error)
-      // Revert on error
-      fetchData()
-    }
-  }
-
-  const mainQuest = quests.find(q => q.type === 'main')
-  const sideQuests = quests.filter(q => q.type === 'side')
-  const dailyQuests = quests.filter(q => q.type === 'daily')
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="text-5xl mb-4 animate-float">⚔️</div>
-          <div className="text-slate-400 text-sm">Loading quests...</div>
-        </div>
-      </div>
-    )
-  }
+export default function LandingPage() {
+  const { isSignedIn } = useAuth()
 
   return (
-    <>
-      {/* Date */}
-      <div className="text-center mb-6">
-        <h2 className="text-slate-400 text-sm font-medium">{formatDisplayDate(today)}</h2>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
+      <h1 className="font-pixel text-4xl md:text-5xl text-quest-gold mb-6" style={{ textShadow: '0 0 30px rgba(246, 201, 14, 0.5)' }}>
+        Quest Board
+      </h1>
+      <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-xl">
+        Turn your boring tasks into epic quests
+      </p>
+      <p className="text-sm text-slate-400 mb-12 max-w-md">
+        Gamified task management with Asana integration, daily streaks, and RPG-style progression.
+      </p>
 
-      {/* Stats */}
-      <StatsBar
-        todayPoints={stats.todayPoints}
-        weekPoints={stats.weekPoints}
-        streak={stats.streak}
-      />
-
-      {/* Quest Board Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - Main Quest */}
-        <div className="lg:sticky lg:top-6 lg:self-start">
-          <MainQuestCard
-            quest={mainQuest || null}
-            isCompleted={mainQuest ? completedIds.has(mainQuest.id) : false}
-            onToggle={toggleQuest}
-          />
+      {isSignedIn ? (
+        <Link
+          href="/quests"
+          className="px-8 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-colors"
+          style={{ textShadow: 'none' }}
+        >
+          Enter Quest Board →
+        </Link>
+      ) : (
+        <div className="flex gap-4">
+          <Link
+            href="/sign-up"
+            className="px-8 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-colors"
+            style={{ textShadow: 'none' }}
+          >
+            Begin Your Adventure
+          </Link>
+          <Link
+            href="/sign-in"
+            className="px-8 py-4 border border-quest-gold text-quest-gold font-pixel text-sm rounded-lg hover:bg-quest-gold/10 transition-colors"
+          >
+            Sign In
+          </Link>
         </div>
-
-        {/* Right Column - Side & Daily */}
-        <div className="space-y-6">
-          {/* Side Quests */}
-          <div className="quest-card p-4 border-l-4 border-l-violet-500">
-            <h2 className="text-violet-400 font-semibold text-sm mb-3 flex items-center gap-2">
-              <span>⚔️</span> Side Quests
-              <span className="text-slate-500 dark:text-slate-400 text-xs">
-                ({sideQuests.filter(q => completedIds.has(q.id)).length}/{sideQuests.length})
-              </span>
-            </h2>
-            <div className="space-y-2">
-              {sideQuests.length === 0 ? (
-                <div className="p-4 text-center text-slate-400 text-sm border border-dashed border-violet-500/30 rounded-lg">
-                  No side quests today
-                </div>
-              ) : (
-                sideQuests.map((quest, i) => (
-                  <QuestCard
-                    key={quest.id}
-                    quest={quest}
-                    isCompleted={completedIds.has(quest.id)}
-                    onToggle={toggleQuest}
-                    index={i}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Daily Quests */}
-          <div className="quest-card p-4 border-l-4 border-l-cyan-500">
-            <h2 className="text-cyan-400 font-semibold text-sm mb-3 flex items-center gap-2">
-              <span>📋</span> Daily Quests
-              <span className="text-slate-500 dark:text-slate-400 text-xs">
-                ({dailyQuests.filter(q => completedIds.has(q.id)).length}/{dailyQuests.length})
-              </span>
-            </h2>
-            <div className="space-y-2">
-              {dailyQuests.length === 0 ? (
-                <div className="p-4 text-center text-slate-400 text-sm border border-dashed border-cyan-500/30 rounded-lg">
-                  No daily quests today
-                </div>
-              ) : (
-                dailyQuests.map((quest, i) => (
-                  <QuestCard
-                    key={quest.id}
-                    quest={quest}
-                    isCompleted={completedIds.has(quest.id)}
-                    onToggle={toggleQuest}
-                    index={i}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Rank Guide Footer */}
-      <div className="mt-12 text-center">
-        <div className="flex justify-center gap-6 text-sm text-slate-600">
-          <span>🌱 Start</span>
-          <span>🥉 50</span>
-          <span>🥈 100</span>
-          <span>🥇 150</span>
-          <span>💎 200+</span>
-        </div>
-      </div>
-
-      {/* Celebration */}
-      <CompletionAnimation
-        show={celebration.show}
-        points={celebration.points}
-        onComplete={() => setCelebration({ show: false, points: 0 })}
-      />
-    </>
+      )}
+    </div>
   )
 }

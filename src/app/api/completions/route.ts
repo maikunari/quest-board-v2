@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireUser } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
 // GET /api/completions?date=2024-01-15
 export async function GET(request: NextRequest) {
   try {
+    const user = await requireUser()
     const { searchParams } = new URL(request.url)
     const dateStr = searchParams.get('date')
-    const visitorId = searchParams.get('visitorId') || 'default'
 
-    const where: any = { visitorId }
+    const where: any = {
+      OR: [{ userId: user.id }, { userId: null }],
+    }
 
     if (dateStr) {
       where.date = new Date(dateStr)
@@ -25,6 +28,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(completions)
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     console.error('Error fetching completions:', error)
     return NextResponse.json({ error: 'Failed to fetch completions' }, { status: 500 })
   }
@@ -33,8 +39,9 @@ export async function GET(request: NextRequest) {
 // POST /api/completions - Toggle quest completion
 export async function POST(request: NextRequest) {
   try {
+    const user = await requireUser()
     const body = await request.json()
-    const { questId, date, visitorId = 'default', completed } = body
+    const { questId, date, completed } = body
 
     const dateObj = new Date(date)
 
@@ -44,7 +51,7 @@ export async function POST(request: NextRequest) {
         where: {
           questId,
           date: dateObj,
-          visitorId,
+          OR: [{ userId: user.id }, { userId: null }],
         },
       })
 
@@ -61,8 +68,7 @@ export async function POST(request: NextRequest) {
         }).catch((err) => console.error('Asana uncomplete failed:', err))
       }
 
-      // Update day stats
-      await updateDayStats(dateObj)
+      await updateDayStats(dateObj, user.id)
 
       return NextResponse.json({ completed: false })
     }
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
       where: {
         questId,
         date: dateObj,
-        visitorId,
+        OR: [{ userId: user.id }, { userId: null }],
       },
     })
 
@@ -93,16 +99,17 @@ export async function POST(request: NextRequest) {
         }).catch((err) => console.error('Asana uncomplete failed:', err))
       }
       
-      await updateDayStats(dateObj)
+      await updateDayStats(dateObj, user.id)
       return NextResponse.json({ completed: false })
     }
 
     // Create completion
     const completion = await prisma.completion.create({
       data: {
+        userId: user.id,
         questId,
         date: dateObj,
-        visitorId,
+        visitorId: user.id, // Use user ID as visitor ID for uniqueness constraint
       },
       include: {
         quest: true,
@@ -112,7 +119,6 @@ export async function POST(request: NextRequest) {
     // Also complete in Asana if linked
     const quest = await prisma.quest.findUnique({ where: { id: questId } })
     if (quest?.asanaTaskId && process.env.ASANA_TOKEN) {
-      // Call Asana API directly (fire and forget)
       fetch(`https://app.asana.com/api/1.0/tasks/${quest.asanaTaskId}`, {
         method: 'PUT',
         headers: {
@@ -123,19 +129,32 @@ export async function POST(request: NextRequest) {
       }).catch((err) => console.error('Asana complete failed:', err))
     }
 
-    await updateDayStats(dateObj)
+    await updateDayStats(dateObj, user.id)
 
     return NextResponse.json({ completed: true, completion })
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     console.error('Error toggling completion:', error)
     return NextResponse.json({ error: 'Failed to toggle completion' }, { status: 500 })
   }
 }
 
-async function updateDayStats(date: Date) {
+async function updateDayStats(date: Date, userId: string) {
   const quests = await prisma.quest.findMany({
-    where: { date },
-    include: { completions: { where: { date } } },
+    where: {
+      date,
+      OR: [{ userId }, { userId: null }],
+    },
+    include: {
+      completions: {
+        where: {
+          date,
+          OR: [{ userId }, { userId: null }],
+        },
+      },
+    },
   })
 
   const questsTotal = quests.length
@@ -145,8 +164,9 @@ async function updateDayStats(date: Date) {
     .reduce((sum, q) => sum + q.points, 0)
 
   await prisma.dayStats.upsert({
-    where: { date },
+    where: { userId_date: { userId, date } },
     create: {
+      userId,
       date,
       totalPoints,
       questsCompleted,

@@ -135,8 +135,9 @@ export async function OPTIONS() {
 }
 
 async function updateDayStats(date: Date) {
+  // Webhook context has no user — update legacy (userId=null) stats
   const quests = await prisma.quest.findMany({
-    where: { date },
+    where: { date, userId: null },
     include: { completions: { where: { date } } },
   })
 
@@ -146,9 +147,19 @@ async function updateDayStats(date: Date) {
     .filter(q => q.completions.length > 0)
     .reduce((sum, q) => sum + q.points, 0)
 
-  await prisma.dayStats.upsert({
-    where: { date },
-    create: { date, totalPoints, questsCompleted, questsTotal },
-    update: { totalPoints, questsCompleted, questsTotal },
+  // Find or create legacy day stats (userId=null)
+  const existing = await prisma.dayStats.findFirst({
+    where: { date, userId: null },
   })
+
+  if (existing) {
+    await prisma.dayStats.update({
+      where: { id: existing.id },
+      data: { totalPoints, questsCompleted, questsTotal },
+    })
+  } else {
+    await prisma.dayStats.create({
+      data: { date, totalPoints, questsCompleted, questsTotal },
+    })
+  }
 }

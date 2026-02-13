@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import ThemeToggle from './ThemeToggle'
 
 const links = [
-  { href: '/', label: '⚔️ Quests', key: 'quests' },
+  { href: '/quests', label: '⚔️ Quests', key: 'quests' },
   { href: '/admin', label: '🛠️ Admin', key: 'admin' },
   { href: '/history', label: '📜 History', key: 'history' },
   { href: '/stats', label: '📊 Stats', key: 'stats' },
@@ -23,20 +24,28 @@ export default function Navigation() {
             Quest Board
           </Link>
           <div className="flex items-center gap-1">
-            {links.map((link) => (
-              <Link
-                key={link.key}
-                href={link.href}
-                className={`nav-link ${
-                  pathname === link.href ? 'active' : ''
-                }`}
-              >
-                {link.label}
+            <SignedIn>
+              {links.map((link) => (
+                <Link
+                  key={link.key}
+                  href={link.href}
+                  className={`nav-link ${
+                    pathname === link.href ? 'active' : ''
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="ml-2 pl-2 border-l border-white/10 dark:border-white/10 flex items-center gap-2">
+                <ThemeToggle />
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <Link href="/sign-in" className="nav-link">
+                🔑 Sign In
               </Link>
-            ))}
-            <div className="ml-2 pl-2 border-l border-white/10 dark:border-white/10">
-              <ThemeToggle />
-            </div>
+            </SignedOut>
           </div>
         </div>
       </div>

@@ -24,6 +24,38 @@ const defaultTemplate = {
   order: 0,
 }
 
+function BillingSection() {
+  const [loading, setLoading] = useState(false)
+
+  async function openPortal() {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+    } catch (error) {
+      console.error('Portal error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <section className="quest-card p-6 mb-6">
+      <h2 className="text-lg font-semibold mb-2">💳 Billing & Plan</h2>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+        Manage your subscription, update payment method, or change plans.
+      </p>
+      <div className="flex gap-3">
+        <a href="/pricing" className="btn-primary text-sm">View Plans</a>
+        <button onClick={openPortal} disabled={loading} className="btn-secondary text-sm">
+          {loading ? 'Loading...' : 'Manage Billing'}
+        </button>
+      </div>
+    </section>
+  )
+}
+
 export default function SettingsPage() {
   const [templates, setTemplates] = useState<DailyTemplate[]>([])
   const [editing, setEditing] = useState<Partial<DailyTemplate> | null>(null)
@@ -82,6 +114,9 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">⚙️ Settings</h1>
+
+      {/* Billing */}
+      <BillingSection />
 
       {/* Toast */}
       <AnimatePresence>

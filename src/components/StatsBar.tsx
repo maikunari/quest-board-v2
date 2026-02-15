@@ -1,6 +1,7 @@
 'use client'
 
 import { getRank } from '@/lib/utils'
+import { getStreakMultiplier } from '@/lib/streaks'
 
 interface StatsBarProps {
   todayPoints: number
@@ -10,6 +11,7 @@ interface StatsBarProps {
 
 export default function StatsBar({ todayPoints, weekPoints, streak }: StatsBarProps) {
   const rank = getRank(weekPoints)
+  const multiplier = getStreakMultiplier(streak)
 
   return (
     <div className="flex flex-wrap justify-center gap-4 mb-8">
@@ -29,12 +31,14 @@ export default function StatsBar({ todayPoints, weekPoints, streak }: StatsBarPr
         <div className="text-xs text-slate-500">pts</div>
       </div>
 
-      <div className="quest-card px-6 py-4 text-center min-w-[100px] hover:border-red-500/30 group">
+      <div className="quest-card px-6 py-4 text-center min-w-[100px] hover:border-red-500/30 group relative">
         <div className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Streak</div>
         <div className="font-pixel text-xl text-red-400 group-hover:scale-110 transition-transform">
           {streak}
         </div>
-        <div className="text-xs text-slate-500">🔥</div>
+        <div className="text-xs text-slate-500">
+          🔥 {multiplier > 1 && <span className="text-quest-gold font-bold">{multiplier}x XP</span>}
+        </div>
       </div>
 
       <div className="quest-card px-6 py-4 text-center min-w-[100px] hover:border-violet-500/30 group">

@@ -21,12 +21,46 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  soundEnabled  Boolean   @default(true)
+  streakFreezes Int       @default(0)     // available streak freezes (Pro: 1/week)
+  lastLoginDate DateTime? @db.Date        // for login streak tracking
+
   quests        Quest[]
   completions   Completion[]
   dayStats      DayStats[]
   dailyTemplates DailyTemplate[]
+  achievements  UserAchievement[]
+  streak        Streak?
 
   @@index([clerkId])
+}
+
+// ─── Streaks ────────────────────────────────────────
+
+model Streak {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  lastActiveDate DateTime? @db.Date
+  frozenToday   Boolean  @default(false) // streak freeze used today
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ─── Achievements ───────────────────────────────────
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String   // key into ACHIEVEMENTS constant
+  unlockedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@index([userId])
 }
 
 enum Plan {

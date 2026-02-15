@@ -36,27 +36,9 @@ export async function GET(request: NextRequest) {
     })
     const weekPoints = weekStats.reduce((sum, s) => sum + s.totalPoints, 0) + todayPoints
 
-    // Streak calculation
-    let streak = 0
-    let checkDate = subDays(today, 1)
-
-    const todayHasCompletions = todayQuests.some(q => q.completions.length > 0)
-    if (todayHasCompletions) {
-      streak = 1
-    }
-
-    for (let i = 0; i < 365; i++) {
-      const dayStats = await prisma.dayStats.findFirst({
-        where: { date: checkDate, ...userScope },
-      })
-
-      if (dayStats && dayStats.questsCompleted > 0) {
-        streak++
-        checkDate = subDays(checkDate, 1)
-      } else {
-        break
-      }
-    }
+    // Streak from dedicated model (fast!)
+    const streakRecord = await prisma.streak.findUnique({ where: { userId: user.id } })
+    const streak = streakRecord?.currentStreak || 0
 
     // Total points all time
     const allStats = await prisma.dayStats.aggregate({

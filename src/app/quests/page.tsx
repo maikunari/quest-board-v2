@@ -5,7 +5,10 @@ import StatsBar from '@/components/StatsBar'
 import MainQuestCard from '@/components/MainQuestCard'
 import QuestCard from '@/components/QuestCard'
 import CompletionAnimation from '@/components/CompletionAnimation'
+import { AchievementToast } from '@/components/AchievementToast'
+import { useSound } from '@/lib/use-sound'
 import { formatDisplayDate, getToday } from '@/lib/utils'
+import type { Achievement } from '@/lib/achievements'
 
 interface Quest {
   id: string
@@ -32,7 +35,9 @@ export default function QuestBoard() {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set())
   const [stats, setStats] = useState<Stats>({ todayPoints: 0, weekPoints: 0, streak: 0 })
   const [celebration, setCelebration] = useState<{ show: boolean; points: number }>({ show: false, points: 0 })
+  const [achievementToast, setAchievementToast] = useState<Achievement | null>(null)
   const [loading, setLoading] = useState(true)
+  const sound = useSound()
 
   const today = getToday()
 
@@ -94,9 +99,16 @@ export default function QuestBoard() {
     }
     setCompletedIds(newCompleted)
 
+    // Play sound
+    if (!wasCompleted) {
+      sound.complete()
+    } else {
+      sound.undo()
+    }
+
     // Persist
     try {
-      await fetch('/api/completions', {
+      const res = await fetch('/api/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -105,6 +117,29 @@ export default function QuestBoard() {
           completed: !wasCompleted,
         }),
       })
+      const data = await res.json()
+
+      // Handle streak milestones
+      if (data.streak?.newMilestone) {
+        sound.streak()
+      }
+
+      // Handle new achievements
+      if (data.newAchievements?.length > 0) {
+        sound.achievement()
+        // Show achievements one at a time
+        for (let i = 0; i < data.newAchievements.length; i++) {
+          setTimeout(() => {
+            setAchievementToast(data.newAchievements[i])
+            setTimeout(() => setAchievementToast(null), 4000)
+          }, i * 5000)
+        }
+      }
+
+      // Update streak in stats if returned
+      if (data.streak) {
+        setStats(prev => ({ ...prev, streak: data.streak.currentStreak }))
+      }
     } catch (error) {
       console.error('Error toggling quest:', error)
       // Revert on error
@@ -226,6 +261,10 @@ export default function QuestBoard() {
         show={celebration.show}
         points={celebration.points}
         onComplete={() => setCelebration({ show: false, points: 0 })}
+      />
+      <AchievementToast
+        achievement={achievementToast}
+        onDismiss={() => setAchievementToast(null)}
       />
     </>
   )

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireUser } from '@/lib/auth'
+import { updateStreak, getStreakMultiplier } from '@/lib/streaks'
+import { checkAchievements } from '@/lib/check-achievements'
 
 export const dynamic = 'force-dynamic'
 
@@ -131,7 +133,37 @@ export async function POST(request: NextRequest) {
 
     await updateDayStats(dateObj, user.id)
 
-    return NextResponse.json({ completed: true, completion })
+    // Update streak
+    const streakResult = await updateStreak(user.id)
+
+    // Check achievements
+    const now = new Date()
+    const todayQuests = await prisma.quest.findMany({
+      where: { date: dateObj, OR: [{ userId: user.id }, { userId: null }] },
+      include: { completions: { where: { date: dateObj, OR: [{ userId: user.id }, { userId: null }] } } },
+    })
+    const allDone = todayQuests.length > 0 && todayQuests.every(q => q.completions.length > 0)
+    const hasAsana = !!process.env.ASANA_TOKEN
+
+    const newAchievements = await checkAchievements(user.id, {
+      completionHour: now.getHours(),
+      isWeekend: now.getDay() === 0 || now.getDay() === 6,
+      allQuestsCompleted: allDone,
+      hasIntegration: hasAsana,
+    })
+
+    return NextResponse.json({
+      completed: true,
+      completion,
+      streak: streakResult,
+      newAchievements: newAchievements.map(a => ({
+        id: a.id,
+        name: a.name,
+        description: a.description,
+        icon: a.icon,
+        rarity: a.rarity,
+      })),
+    })
   } catch (error) {
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -24,6 +24,44 @@ const defaultTemplate = {
   order: 0,
 }
 
+function SoundToggle() {
+  const [enabled, setEnabled] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return localStorage.getItem('quest-sound') !== 'off'
+  })
+
+  function toggle() {
+    const newVal = !enabled
+    setEnabled(newVal)
+    localStorage.setItem('quest-sound', newVal ? 'on' : 'off')
+  }
+
+  return (
+    <section className="quest-card p-6 mb-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">🔊 Sound Effects</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Play sounds for completions, level ups, and achievements
+          </p>
+        </div>
+        <button
+          onClick={toggle}
+          className={`relative w-12 h-6 rounded-full transition-colors ${
+            enabled ? 'bg-quest-gold' : 'bg-slate-600'
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${
+              enabled ? 'translate-x-6' : ''
+            }`}
+          />
+        </button>
+      </div>
+    </section>
+  )
+}
+
 function BillingSection() {
   const [loading, setLoading] = useState(false)
 
@@ -114,6 +152,9 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">⚙️ Settings</h1>
+
+      {/* Sound */}
+      <SoundToggle />
 
       {/* Billing */}
       <BillingSection />

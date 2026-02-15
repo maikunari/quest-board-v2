@@ -10,6 +10,7 @@ const links = [
   { href: '/admin', label: '🛠️ Admin', key: 'admin' },
   { href: '/history', label: '📜 History', key: 'history' },
   { href: '/stats', label: '📊 Stats', key: 'stats' },
+  { href: '/achievements', label: '🏆 Badges', key: 'achievements' },
   { href: '/settings', label: '⚙️ Settings', key: 'settings' },
 ]
 

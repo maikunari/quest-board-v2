@@ -151,3 +151,13 @@ model DailyTemplate {
 
   @@index([userId])
 }
+
+// ─── Contact Messages ───────────────────────────────
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}

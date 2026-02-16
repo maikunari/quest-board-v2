@@ -88,7 +88,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-slate-800 dark:text-white">
       <div className="mx-auto max-w-6xl px-4 py-20">
         <div className="text-center mb-16">
           <motion.h1
@@ -98,7 +98,7 @@ export default function PricingPage() {
           >
             Choose Your Difficulty
           </motion.h1>
-          <p className="text-xl text-gray-400">
+          <p className="text-xl text-slate-500 dark:text-gray-400">
             Every hero starts somewhere. Pick the tier that matches your ambition.
           </p>
         </div>
@@ -112,8 +112,8 @@ export default function PricingPage() {
               transition={{ delay: i * 0.1 }}
               className={`relative rounded-2xl border p-8 flex flex-col ${
                 tier.highlighted
-                  ? 'border-yellow-500/50 bg-gray-900/80 shadow-lg shadow-yellow-500/10'
-                  : 'border-gray-700/50 bg-gray-900/50'
+                  ? 'border-amber-400/50 dark:border-yellow-500/50 bg-amber-50/50 dark:bg-gray-900/80 shadow-lg shadow-amber-500/10 dark:shadow-yellow-500/10'
+                  : 'border-slate-200 dark:border-gray-700/50 bg-white/50 dark:bg-gray-900/50'
               }`}
             >
               {tier.highlighted && (
@@ -125,11 +125,11 @@ export default function PricingPage() {
               )}
 
               <div className="mb-6">
-                <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">
+                <p className="text-xs uppercase tracking-wider text-slate-400 dark:text-gray-500 mb-2">
                   {tier.difficulty}
                 </p>
                 <h2 className="text-2xl font-bold mb-1">{tier.name}</h2>
-                <p className="text-sm text-gray-400">{tier.description}</p>
+                <p className="text-sm text-slate-500 dark:text-gray-400">{tier.description}</p>
               </div>
 
               <div className="mb-8">
@@ -137,14 +137,14 @@ export default function PricingPage() {
                   ${tier.price}
                 </span>
                 {tier.price > 0 && (
-                  <span className="text-gray-400 ml-1">/mo{tier.plan === 'TEAMS' ? '/user' : ''}</span>
+                  <span className="text-slate-400 dark:text-gray-400 ml-1">/mo{tier.plan === 'TEAMS' ? '/user' : ''}</span>
                 )}
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2 text-sm text-gray-300">
-                    <span className="text-green-400 mt-0.5">✓</span>
+                  <li key={feature} className="flex items-start gap-2 text-sm text-slate-600 dark:text-gray-300">
+                    <span className="text-green-500 dark:text-green-400 mt-0.5">✓</span>
                     {feature}
                   </li>
                 ))}
@@ -156,9 +156,7 @@ export default function PricingPage() {
                 className={`w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all ${
                   tier.highlighted
                     ? 'bg-yellow-500 text-black hover:bg-yellow-400'
-                    : tier.plan === 'FREE'
-                    ? 'bg-gray-700 text-white hover:bg-gray-600'
-                    : 'bg-gray-700 text-white hover:bg-gray-600'
+                    : 'bg-slate-200 dark:bg-gray-700 text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-gray-600'
                 } disabled:opacity-50`}
               >
                 {loading === tier.plan ? 'Loading...' : tier.plan === 'FREE' && isSignedIn ? 'Current Plan' : tier.cta}
@@ -168,7 +166,7 @@ export default function PricingPage() {
         </div>
 
         <div className="text-center mt-12">
-          <Link href={isSignedIn ? '/quests' : '/'} className="text-gray-500 hover:text-gray-300 text-sm">
+          <Link href={isSignedIn ? '/quests' : '/'} className="text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 text-sm">
             ← Back to {isSignedIn ? 'Quest Board' : 'Home'}
           </Link>
         </div>

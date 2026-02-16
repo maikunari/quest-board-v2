@@ -44,11 +44,11 @@ const features = [
 ]
 
 const rarityColors: Record<string, string> = {
-  Common: 'text-gray-400 border-gray-600',
-  Uncommon: 'text-green-400 border-green-600',
-  Rare: 'text-blue-400 border-blue-600',
-  Epic: 'text-purple-400 border-purple-600',
-  Legendary: 'text-yellow-400 border-yellow-600',
+  Common: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600',
+  Uncommon: 'text-green-600 dark:text-green-400 border-green-300 dark:border-green-600',
+  Rare: 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600',
+  Epic: 'text-purple-600 dark:text-purple-400 border-purple-300 dark:border-purple-600',
+  Legendary: 'text-yellow-600 dark:text-yellow-400 border-yellow-300 dark:border-yellow-600',
 }
 
 const stats = [
@@ -90,7 +90,7 @@ export default function LandingPage() {
   const { isSignedIn } = useAuth()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-quest-dark to-gray-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-quest-dark dark:to-gray-950 text-slate-800 dark:text-white overflow-hidden">
       {/* Hero */}
       <section className="relative px-4 pt-20 pb-24">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-quest-gold/5 via-transparent to-transparent" />
@@ -101,13 +101,13 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h1
-              className="font-pixel text-4xl sm:text-5xl md:text-6xl text-quest-gold mb-6 leading-tight"
+              className="font-pixel text-4xl sm:text-5xl md:text-6xl text-amber-600 dark:text-quest-gold mb-6 leading-tight"
               style={{ textShadow: '0 0 40px rgba(246, 201, 14, 0.4)' }}
             >
               Your Tasks Are Boring
             </h1>
             <p
-              className="font-pixel text-lg sm:text-xl md:text-2xl text-quest-gold/80 mb-4"
+              className="font-pixel text-lg sm:text-xl md:text-2xl text-amber-600/80 dark:text-quest-gold/80 mb-4"
               style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.2)' }}
             >
               Make Them Legendary
@@ -115,7 +115,7 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.p
-            className="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl text-slate-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -147,7 +147,7 @@ export default function LandingPage() {
                 </Link>
                 <Link
                   href="/sign-in"
-                  className="px-8 py-4 border border-quest-gold/50 text-quest-gold font-pixel text-sm rounded-lg hover:bg-quest-gold/10 transition-all"
+                  className="px-8 py-4 border border-amber-400/50 dark:border-quest-gold/50 text-amber-600 dark:text-quest-gold font-pixel text-sm rounded-lg hover:bg-amber-50 dark:hover:bg-quest-gold/10 transition-all"
                 >
                   Sign In
                 </Link>
@@ -158,7 +158,7 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Bar */}
-      <section className="border-y border-gray-800 bg-gray-900/50 backdrop-blur">
+      <section className="border-y border-slate-200 dark:border-gray-800 bg-slate-50/50 dark:bg-gray-900/50 backdrop-blur">
         <div className="mx-auto max-w-4xl px-4 py-8 flex justify-center gap-12 md:gap-20">
           {stats.map((stat, i) => (
             <motion.div
@@ -169,8 +169,8 @@ export default function LandingPage() {
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
             >
-              <div className="text-2xl md:text-3xl font-bold text-quest-gold">{stat.value}</div>
-              <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
+              <div className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-quest-gold">{stat.value}</div>
+              <div className="text-xs text-slate-400 dark:text-gray-500 mt-1">{stat.label}</div>
             </motion.div>
           ))}
         </div>
@@ -179,17 +179,17 @@ export default function LandingPage() {
       {/* Features — RPG Item Cards */}
       <section className="px-4 py-24">
         <div className="mx-auto max-w-6xl">
-          <h2 className="font-pixel text-2xl text-center text-quest-gold mb-4"
+          <h2 className="font-pixel text-2xl text-center text-amber-600 dark:text-quest-gold mb-4"
               style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.3)' }}>
             Abilities & Loot
           </h2>
-          <p className="text-center text-gray-500 mb-16">Everything you need to turn productivity into an adventure</p>
+          <p className="text-center text-slate-400 dark:text-gray-500 mb-16">Everything you need to turn productivity into an adventure</p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
               <motion.div
                 key={feature.title}
-                className={`relative rounded-xl border bg-gray-900/60 p-6 transition-all hover:-translate-y-1 hover:shadow-lg ${rarityColors[feature.rarity]}`}
+                className={`relative rounded-xl border bg-white/60 dark:bg-gray-900/60 p-6 transition-all hover:-translate-y-1 hover:shadow-lg ${rarityColors[feature.rarity]}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
@@ -201,8 +201,8 @@ export default function LandingPage() {
                     {feature.rarity}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-white">{feature.title}</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">{feature.description}</p>
+                <h3 className="text-lg font-bold mb-2 text-slate-800 dark:text-white">{feature.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-gray-400 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -210,9 +210,9 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="px-4 py-24 bg-gray-900/30">
+      <section className="px-4 py-24 bg-slate-50/50 dark:bg-gray-900/30">
         <div className="mx-auto max-w-4xl">
-          <h2 className="font-pixel text-2xl text-center text-quest-gold mb-16"
+          <h2 className="font-pixel text-2xl text-center text-amber-600 dark:text-quest-gold mb-16"
               style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.3)' }}>
             How It Works
           </h2>
@@ -230,11 +230,11 @@ export default function LandingPage() {
                 transition={{ delay: i * 0.15 }}
                 viewport={{ once: true }}
               >
-                <div className="w-12 h-12 rounded-full bg-quest-gold/10 border border-quest-gold/30 flex items-center justify-center mx-auto mb-4">
-                  <span className="font-pixel text-quest-gold text-sm">{item.step}</span>
+                <div className="w-12 h-12 rounded-full bg-amber-50 dark:bg-quest-gold/10 border border-amber-200 dark:border-quest-gold/30 flex items-center justify-center mx-auto mb-4">
+                  <span className="font-pixel text-amber-600 dark:text-quest-gold text-sm">{item.step}</span>
                 </div>
-                <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-400">{item.desc}</p>
+                <h3 className="font-bold text-slate-800 dark:text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-gray-400">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -244,11 +244,11 @@ export default function LandingPage() {
       {/* Pricing */}
       <section className="px-4 py-24">
         <div className="mx-auto max-w-5xl">
-          <h2 className="font-pixel text-2xl text-center text-quest-gold mb-4"
+          <h2 className="font-pixel text-2xl text-center text-amber-600 dark:text-quest-gold mb-4"
               style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.3)' }}>
             Choose Your Difficulty
           </h2>
-          <p className="text-center text-gray-500 mb-16">Start free. Upgrade when you're ready for more power.</p>
+          <p className="text-center text-slate-400 dark:text-gray-500 mb-16">Start free. Upgrade when you're ready for more power.</p>
 
           <div className="grid gap-6 md:grid-cols-3">
             {pricingTiers.map((tier, i) => (
@@ -256,8 +256,8 @@ export default function LandingPage() {
                 key={tier.plan}
                 className={`relative rounded-xl border p-6 flex flex-col ${
                   tier.highlighted
-                    ? 'border-quest-gold/50 bg-gray-900/80 shadow-lg shadow-quest-gold/5'
-                    : 'border-gray-700/50 bg-gray-900/50'
+                    ? 'border-amber-400/50 dark:border-quest-gold/50 bg-amber-50/50 dark:bg-gray-900/80 shadow-lg shadow-amber-500/5 dark:shadow-quest-gold/5'
+                    : 'border-slate-200 dark:border-gray-700/50 bg-white/50 dark:bg-gray-900/50'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -271,16 +271,16 @@ export default function LandingPage() {
                     </span>
                   </div>
                 )}
-                <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">{tier.difficulty}</p>
+                <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-gray-500 mb-1">{tier.difficulty}</p>
                 <h3 className="text-xl font-bold mb-1">{tier.name}</h3>
                 <div className="mb-6">
                   <span className="text-4xl font-extrabold">${tier.price}</span>
-                  {tier.price > 0 && <span className="text-gray-500">/mo{tier.perUser ? '/user' : ''}</span>}
+                  {tier.price > 0 && <span className="text-slate-400 dark:text-gray-500">/mo{tier.perUser ? '/user' : ''}</span>}
                 </div>
                 <ul className="space-y-2 mb-8 flex-1">
                   {tier.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="text-green-400">✓</span> {f}
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300">
+                      <span className="text-green-500 dark:text-green-400">✓</span> {f}
                     </li>
                   ))}
                 </ul>
@@ -289,7 +289,7 @@ export default function LandingPage() {
                   className={`block text-center py-3 rounded-lg font-semibold text-sm transition-all ${
                     tier.highlighted
                       ? 'bg-quest-gold text-black hover:bg-amber-300'
-                      : 'bg-gray-700 text-white hover:bg-gray-600'
+                      : 'bg-slate-200 dark:bg-gray-700 text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-gray-600'
                   }`}
                 >
                   {tier.cta}
@@ -307,11 +307,11 @@ export default function LandingPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="font-pixel text-3xl text-quest-gold mb-6"
+          <h2 className="font-pixel text-3xl text-amber-600 dark:text-quest-gold mb-6"
               style={{ textShadow: '0 0 30px rgba(246, 201, 14, 0.4)' }}>
             Ready to Begin?
           </h2>
-          <p className="text-gray-400 mb-8 max-w-lg mx-auto">
+          <p className="text-slate-500 dark:text-gray-400 mb-8 max-w-lg mx-auto">
             Free forever. No credit card required. Start turning your tasks into quests today.
           </p>
           <Link
@@ -324,11 +324,12 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 px-4 py-8 text-center text-xs text-gray-600">
+      <footer className="border-t border-slate-200 dark:border-gray-800 px-4 py-8 text-center text-xs text-slate-400 dark:text-gray-600">
         <p>Quest Board — Turn your boring tasks into epic quests.</p>
         <div className="flex justify-center gap-6 mt-3">
-          <Link href="/pricing" className="hover:text-gray-400">Pricing</Link>
-          <a href="mailto:support@questboard.app" className="hover:text-gray-400">Contact</a>
+          <Link href="/pricing" className="hover:text-slate-600 dark:hover:text-gray-400">Pricing</Link>
+          <Link href="/docs" className="hover:text-slate-600 dark:hover:text-gray-400">Docs</Link>
+          <Link href="/contact" className="hover:text-slate-600 dark:hover:text-gray-400">Contact</Link>
         </div>
       </footer>
     </div>

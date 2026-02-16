@@ -62,6 +62,141 @@ function SoundToggle() {
   )
 }
 
+function AsanaConnection() {
+  const [status, setStatus] = useState<'loading' | 'connected' | 'disconnected' | 'error'>('loading')
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [workspaceName, setWorkspaceName] = useState<string | null>(null)
+  const [taskCount, setTaskCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    checkConnection()
+  }, [])
+
+  async function checkConnection() {
+    try {
+      const res = await fetch('/api/asana/status')
+      if (!res.ok) {
+        setStatus('disconnected')
+        return
+      }
+      const data = await res.json()
+      if (data.connected) {
+        setStatus('connected')
+        setUserEmail(data.email || null)
+        setWorkspaceName(data.workspace || null)
+        setTaskCount(data.taskCount ?? null)
+      } else {
+        setStatus('disconnected')
+      }
+    } catch {
+      setStatus('disconnected')
+    }
+  }
+
+  return (
+    <section className="quest-card p-6 mb-6">
+      <h2 className="text-lg font-semibold mb-2">🔗 Asana Integration</h2>
+
+      {status === 'loading' && (
+        <p className="text-sm text-slate-500 dark:text-slate-400">Checking connection...</p>
+      )}
+
+      {status === 'connected' && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500" />
+            <span className="text-sm font-medium text-green-600 dark:text-green-400">Connected</span>
+          </div>
+          {userEmail && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Account: <span className="text-slate-700 dark:text-slate-300">{userEmail}</span>
+            </p>
+          )}
+          {workspaceName && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Workspace: <span className="text-slate-700 dark:text-slate-300">{workspaceName}</span>
+            </p>
+          )}
+          {taskCount !== null && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {taskCount} incomplete task{taskCount !== 1 ? 's' : ''} assigned to you
+            </p>
+          )}
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+            Import tasks from the Admin page → &quot;Import from Asana&quot;
+          </p>
+        </div>
+      )}
+
+      {status === 'disconnected' && (
+        <div className="space-y-3">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Connect Asana to import your tasks as quests. You need a Personal Access Token.
+          </p>
+          <div className="bg-slate-50 dark:bg-quest-dark rounded-lg p-4 text-sm space-y-3 border border-slate-200 dark:border-white/10">
+            <p className="font-medium">Setup steps:</p>
+            <ol className="list-decimal list-inside space-y-2 text-slate-600 dark:text-slate-400">
+              <li>
+                Go to{' '}
+                <a
+                  href="https://app.asana.com/0/my-apps"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-violet-600 dark:text-violet-400 underline"
+                >
+                  Asana Developer Console
+                </a>
+              </li>
+              <li>Click <strong>&quot;Create new token&quot;</strong> and copy it</li>
+              <li>
+                Set these environment variables on your server / Vercel:
+                <code className="block mt-1 bg-slate-200 dark:bg-white/5 rounded px-2 py-1 text-xs font-mono">
+                  ASANA_TOKEN=&quot;your_personal_access_token&quot;
+                </code>
+              </li>
+              <li>
+                Find your Workspace GID (it&apos;s in the URL when you open Asana, or use the API):
+                <code className="block mt-1 bg-slate-200 dark:bg-white/5 rounded px-2 py-1 text-xs font-mono">
+                  ASANA_WORKSPACE_GID=&quot;your_workspace_gid&quot;
+                </code>
+              </li>
+              <li>Redeploy your app, then come back here</li>
+            </ol>
+          </div>
+          <a
+            href="https://app.asana.com/0/my-apps"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary inline-block text-sm"
+          >
+            Get Asana Token →
+          </a>
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-red-500" />
+            <span className="text-sm font-medium text-red-600 dark:text-red-400">Connection error</span>
+          </div>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Your Asana token may be invalid or expired. Generate a new one at{' '}
+            <a
+              href="https://app.asana.com/0/my-apps"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-violet-600 dark:text-violet-400 underline"
+            >
+              Asana Developer Console
+            </a>
+          </p>
+        </div>
+      )}
+    </section>
+  )
+}
+
 function BillingSection() {
   const [loading, setLoading] = useState(false)
 
@@ -155,6 +290,9 @@ export default function SettingsPage() {
 
       {/* Sound */}
       <SoundToggle />
+
+      {/* Asana */}
+      <AsanaConnection />
 
       {/* Billing */}
       <BillingSection />

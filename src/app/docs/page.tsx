@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Sword, Lightning, ListChecks, Target, Star } from '@phosphor-icons/react'
+import { Sword, Lightning, ListChecks, Target, Star, Plugs } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 
 const sections: { title: string; icon: Icon; content: { heading: string; text: string }[] }[] = [
@@ -93,6 +93,28 @@ const sections: { title: string; icon: Icon; content: { heading: string; text: s
       {
         heading: 'Check Your Stats',
         text: "Visit the Stats page weekly. Seeing your completion patterns, XP graph, and streak history is incredibly motivating. Data doesn't lie — and watching those numbers climb is its own reward.",
+      },
+    ],
+  },
+  {
+    title: 'Connecting Asana',
+    icon: Plugs,
+    content: [
+      {
+        heading: 'Why Connect Asana?',
+        text: "If you already use Asana for project management, Quest Board can import your tasks directly — no double entry. Your Asana tasks become quests with XP rewards. When you complete them in Quest Board, they get marked done in Asana too.",
+      },
+      {
+        heading: 'Step 1: Get a Personal Access Token',
+        text: "Go to app.asana.com/0/my-apps (Asana Developer Console). Click \"Create new token,\" give it a name like \"Quest Board,\" and copy the token. Keep it safe — you'll need it in the next step.",
+      },
+      {
+        heading: 'Step 2: Set Environment Variables',
+        text: "Add these to your server environment (Vercel dashboard → Settings → Environment Variables):\n\n• ASANA_TOKEN — your personal access token from step 1\n• ASANA_WORKSPACE_GID — your workspace ID (find it in the Asana URL or via the API)\n\nThat's it! Redeploy and check Settings to verify the connection.",
+      },
+      {
+        heading: 'Step 3: Import Tasks',
+        text: 'Once connected, go to the Admin page and click "Import from Asana." You\'ll see all your incomplete tasks. Pick which ones to import as quests. They\'ll sync completion status both ways.',
       },
     ],
   },

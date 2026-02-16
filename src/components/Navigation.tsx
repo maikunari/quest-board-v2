@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, UserButton, useAuth } from '@clerk/nextjs'
 import ThemeToggle from './ThemeToggle'
 
 const links = [
@@ -16,12 +16,13 @@ const links = [
 
 export default function Navigation() {
   const pathname = usePathname()
+  const { isSignedIn } = useAuth()
 
   return (
-    <nav className="border-b border-white/5 dark:border-white/5 mb-8">
+    <nav className="border-b border-slate-200 dark:border-white/5 mb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="font-pixel text-sm text-quest-gold hover:text-amber-300 transition-colors" style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.5)' }}>
+          <Link href={isSignedIn ? '/quests' : '/'} className="font-pixel text-sm text-quest-gold hover:text-amber-300 transition-colors" style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.5)' }}>
             Quest Board
           </Link>
           <div className="flex items-center gap-1">

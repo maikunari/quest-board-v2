@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   try {
     const token = process.env.ASANA_TOKEN
-    const workspaceGid = process.env.ASANA_WORKSPACE_GID || '1211778541088357'
+    const workspaceGid = process.env.ASANA_WORKSPACE_GID
 
     if (!token) {
       return NextResponse.json({ error: 'ASANA_TOKEN not configured' }, { status: 400 })

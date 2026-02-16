@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
+import FloatingParticles from '@/components/FloatingParticles'
 
 const features = [
   {
@@ -90,7 +91,8 @@ export default function LandingPage() {
   const { isSignedIn } = useAuth()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-quest-dark dark:to-gray-950 text-slate-800 dark:text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-quest-dark dark:to-gray-950 text-slate-800 dark:text-white overflow-hidden relative">
+      <FloatingParticles />
       {/* Hero */}
       <section className="relative px-4 pt-20 pb-24">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-quest-gold/5 via-transparent to-transparent" />

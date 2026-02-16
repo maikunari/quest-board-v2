@@ -50,10 +50,11 @@ export default function QuestBoard() {
 
       const questsData = await questsRes.json()
       const statsData = await statsRes.json()
+      const questsList = Array.isArray(questsData) ? questsData : []
 
-      setQuests(questsData)
+      setQuests(questsList)
       setCompletedIds(new Set(
-        questsData
+        questsList
           .filter((q: Quest) => q.completions.length > 0)
           .map((q: Quest) => q.id)
       ))

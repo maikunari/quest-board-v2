@@ -108,7 +108,7 @@ export default function SettingsPage() {
   const fetchTemplates = async () => {
     const res = await fetch('/api/daily-templates')
     const data = await res.json()
-    setTemplates(data)
+    setTemplates(Array.isArray(data) ? data : [])
   }
 
   const showMessage = (text: string, type: 'success' | 'error') => {

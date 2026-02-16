@@ -28,7 +28,11 @@ export default function StatsPage() {
     fetch('/api/stats')
       .then(res => res.json())
       .then(data => {
-        setStats(data)
+        setStats({
+          totalPoints: 0, completionRate: 0, streak: 0, bestStreak: 0,
+          weekPoints: 0, mostProductiveDay: 'N/A', last30Days: [], dayOfWeekStats: [],
+          ...data,
+        })
         setLoading(false)
       })
       .catch(() => setLoading(false))

@@ -3,41 +3,42 @@
 import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
+import { Sword, TrendUp, Flame, LinkSimple, Palette, CastleTurret } from '@phosphor-icons/react'
 import FloatingParticles from '@/components/FloatingParticles'
 
 const features = [
   {
-    icon: '⚔️',
+    icon: Sword,
     title: 'Quest System',
     description: 'Transform every task into a quest. Main quests, side quests, dailies — just like your favorite RPG.',
     rarity: 'Common',
   },
   {
-    icon: '📈',
+    icon: TrendUp,
     title: 'XP & Levels',
     description: 'Earn experience with every completed quest. Level up and watch your character grow stronger.',
     rarity: 'Uncommon',
   },
   {
-    icon: '🔥',
+    icon: Flame,
     title: 'Streaks',
     description: 'Build daily streaks for XP multipliers. 7 days = 2x, 30 days = 3x. Don\'t break the chain.',
     rarity: 'Rare',
   },
   {
-    icon: '🔗',
+    icon: LinkSimple,
     title: 'Asana Integration',
     description: 'Pull tasks from Asana automatically. Your project management tool meets gamification.',
     rarity: 'Rare',
   },
   {
-    icon: '🎨',
+    icon: Palette,
     title: 'Custom Themes',
     description: 'Dark mode, light mode, and custom color themes. Make your quest board truly yours.',
     rarity: 'Epic',
   },
   {
-    icon: '🏰',
+    icon: CastleTurret,
     title: 'Guild Mode',
     description: 'Create teams. Share quest boards. Compete on leaderboards. Conquer tasks together.',
     rarity: 'Legendary',
@@ -198,7 +199,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-3xl">{feature.icon}</span>
+                  <feature.icon size={32} weight="duotone" className="text-current" />
                   <span className={`text-[10px] uppercase tracking-wider ${rarityColors[feature.rarity]}`}>
                     {feature.rarity}
                   </span>

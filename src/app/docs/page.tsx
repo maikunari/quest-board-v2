@@ -2,10 +2,13 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Sword, Lightning, ListChecks, Target, Star } from '@phosphor-icons/react'
+import type { Icon } from '@phosphor-icons/react'
 
-const sections = [
+const sections: { title: string; icon: Icon; content: { heading: string; text: string }[] }[] = [
   {
     title: 'Getting Started',
+    icon: Lightning,
     content: [
       {
         heading: 'Start with 3 Side Quests',
@@ -19,6 +22,7 @@ const sections = [
   },
   {
     title: 'How XP & Levels Work',
+    icon: Star,
     content: [
       {
         heading: 'Earning XP',
@@ -36,6 +40,7 @@ const sections = [
   },
   {
     title: 'Quest Types',
+    icon: Sword,
     content: [
       {
         heading: '⚔️ Main Quests',
@@ -53,6 +58,7 @@ const sections = [
   },
   {
     title: 'Tips for Building the Habit',
+    icon: Target,
     content: [
       {
         heading: 'The 2-Minute Rule',
@@ -74,6 +80,7 @@ const sections = [
   },
   {
     title: 'Pro Tips',
+    icon: ListChecks,
     content: [
       {
         heading: 'Use Descriptive Quest Names',
@@ -120,8 +127,9 @@ export default function DocsPage() {
               transition={{ delay: si * 0.05 }}
               viewport={{ once: true }}
             >
-              <h2 className="font-pixel text-lg text-amber-600 dark:text-quest-gold mb-8"
+              <h2 className="font-pixel text-lg text-amber-600 dark:text-quest-gold mb-8 flex items-center gap-3"
                   style={{ textShadow: '0 0 15px rgba(246, 201, 14, 0.2)' }}>
+                <section.icon size={24} weight="duotone" />
                 {section.title}
               </h2>
               <div className="space-y-8">

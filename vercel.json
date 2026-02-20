@@ -8,5 +8,15 @@
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/weekly-reset",
+      "schedule": "0 0 * * 0"
+    },
+    {
+      "path": "/api/cron/streak-reminder",
+      "schedule": "0 20 * * *"
+    }
   ]
 }

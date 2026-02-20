@@ -131,6 +131,14 @@ export async function POST(request: NextRequest) {
       }).catch((err) => console.error('Asana complete failed:', err))
     }
 
+    // Increment weeklyXp by the quest's point value
+    if (quest) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { weeklyXp: { increment: quest.points } },
+      })
+    }
+
     await updateDayStats(dateObj, user.id)
 
     // Update streak

@@ -11,6 +11,7 @@ const links = [
   { href: '/history', label: '📜 History', key: 'history' },
   { href: '/stats', label: '📊 Stats', key: 'stats' },
   { href: '/achievements', label: '🏆 Badges', key: 'achievements' },
+  { href: '/leaderboard', label: '🥇 Leaderboard', key: 'leaderboard' },
   { href: '/settings', label: '⚙️ Settings', key: 'settings' },
 ]
 

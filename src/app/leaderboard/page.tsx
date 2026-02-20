@@ -7,6 +7,7 @@ interface LeaderboardEntry {
   name: string
   weeklyXp: number
   isCurrentUser: boolean
+  zone: 'ascension' | 'danger' | null
 }
 
 interface CurrentUserData {
@@ -127,57 +128,130 @@ export default function LeaderboardPage() {
               No XP earned this week yet. Be the first! ⚔️
             </div>
           ) : (
-            leaderboard.map((entry) => (
-              <div
-                key={entry.rank}
-                className={`flex items-center gap-4 px-5 py-3.5 transition-colors ${
-                  entry.isCurrentUser
-                    ? 'bg-violet-500/10 border-l-4 border-violet-500'
-                    : 'hover:bg-slate-50 dark:hover:bg-white/3'
-                }`}
-              >
-                {/* Rank */}
-                <div className="w-10 text-center font-pixel text-sm shrink-0">
-                  {entry.rank <= 3 ? (
-                    <span className="text-lg">{getRankEmoji(entry.rank)}</span>
-                  ) : (
-                    <span className="text-slate-500 dark:text-slate-400 text-xs">
-                      #{entry.rank}
-                    </span>
-                  )}
-                </div>
+            (() => {
+              // Build render items: inject zone section headers before first entry of each zone
+              type RenderItem =
+                | { type: 'entry'; entry: LeaderboardEntry }
+                | { type: 'zone-header'; zone: 'ascension' | 'danger' }
 
-                {/* Name */}
-                <div className="flex-1 min-w-0">
-                  <span
-                    className={`font-medium text-sm truncate ${
-                      entry.isCurrentUser
-                        ? 'text-violet-400'
-                        : 'text-slate-800 dark:text-slate-200'
-                    }`}
-                  >
-                    {entry.name}
-                    {entry.isCurrentUser && (
-                      <span className="ml-2 text-xs text-violet-500 dark:text-violet-400 font-normal">
-                        (you)
+              const items: RenderItem[] = []
+              let ascensionHeaderInserted = false
+              let dangerHeaderInserted = false
+
+              for (const entry of leaderboard) {
+                if (entry.zone === 'ascension' && !ascensionHeaderInserted) {
+                  items.push({ type: 'zone-header', zone: 'ascension' })
+                  ascensionHeaderInserted = true
+                }
+                if (entry.zone === 'danger' && !dangerHeaderInserted) {
+                  items.push({ type: 'zone-header', zone: 'danger' })
+                  dangerHeaderInserted = true
+                }
+                items.push({ type: 'entry', entry })
+              }
+
+              return items.map((item, i) => {
+                if (item.type === 'zone-header') {
+                  return item.zone === 'ascension' ? (
+                    <div
+                      key={`zone-header-ascension-${i}`}
+                      className="flex items-center gap-2 px-5 py-1.5 bg-emerald-500/5"
+                    >
+                      <span className="text-xs font-bold tracking-widest text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.7)]">
+                        🔥 ASCENSION ZONE
                       </span>
-                    )}
-                  </span>
-                </div>
+                      <span
+                        title="Top 3 earn a bonus next week. Bottom 3 risk demotion when leagues launch."
+                        className="text-slate-500 dark:text-slate-400 cursor-help text-xs select-none"
+                      >
+                        ⓘ
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      key={`zone-header-danger-${i}`}
+                      className="flex items-center gap-2 px-5 py-1.5 bg-red-500/5"
+                    >
+                      <span className="text-xs font-bold tracking-widest text-red-400 drop-shadow-[0_0_6px_rgba(248,113,113,0.7)]">
+                        ☠️ DANGER ZONE
+                      </span>
+                      <span
+                        title="Top 3 earn a bonus next week. Bottom 3 risk demotion when leagues launch."
+                        className="text-slate-500 dark:text-slate-400 cursor-help text-xs select-none"
+                      >
+                        ⓘ
+                      </span>
+                    </div>
+                  )
+                }
 
-                {/* XP */}
-                <div className="text-right shrink-0">
-                  <span
-                    className={`font-semibold text-sm ${
-                      entry.isCurrentUser ? 'text-violet-300' : 'text-quest-gold'
-                    }`}
+                const entry = item.entry
+                // Determine left border: violet (current user) takes priority, then zone colors
+                const borderClass = entry.isCurrentUser
+                  ? 'border-l-4 border-violet-500'
+                  : entry.zone === 'ascension'
+                  ? 'border-l-4 border-emerald-500/60'
+                  : entry.zone === 'danger'
+                  ? 'border-l-4 border-red-500/60'
+                  : ''
+
+                const bgClass = entry.isCurrentUser
+                  ? 'bg-violet-500/10'
+                  : entry.zone === 'ascension'
+                  ? 'bg-emerald-500/5 hover:bg-emerald-500/10'
+                  : entry.zone === 'danger'
+                  ? 'bg-red-500/5 hover:bg-red-500/10'
+                  : 'hover:bg-slate-50 dark:hover:bg-white/3'
+
+                return (
+                  <div
+                    key={entry.rank}
+                    className={`flex items-center gap-4 px-5 py-3.5 transition-colors ${bgClass} ${borderClass}`}
                   >
-                    {entry.weeklyXp.toLocaleString()}
-                  </span>
-                  <span className="text-slate-500 dark:text-slate-400 text-xs ml-1">XP</span>
-                </div>
-              </div>
-            ))
+                    {/* Rank */}
+                    <div className="w-10 text-center font-pixel text-sm shrink-0">
+                      {entry.rank <= 3 ? (
+                        <span className="text-lg">{getRankEmoji(entry.rank)}</span>
+                      ) : (
+                        <span className="text-slate-500 dark:text-slate-400 text-xs">
+                          #{entry.rank}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Name */}
+                    <div className="flex-1 min-w-0">
+                      <span
+                        className={`font-medium text-sm truncate ${
+                          entry.isCurrentUser
+                            ? 'text-violet-400'
+                            : 'text-slate-800 dark:text-slate-200'
+                        }`}
+                      >
+                        {entry.name}
+                        {entry.isCurrentUser && (
+                          <span className="ml-2 text-xs text-violet-500 dark:text-violet-400 font-normal">
+                            (you)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* XP */}
+                    <div className="text-right shrink-0">
+                      <span
+                        className={`font-semibold text-sm ${
+                          entry.isCurrentUser ? 'text-violet-300' : 'text-quest-gold'
+                        }`}
+                      >
+                        {entry.weeklyXp.toLocaleString()}
+                      </span>
+                      <span className="text-slate-500 dark:text-slate-400 text-xs ml-1">XP</span>
+                    </div>
+                  </div>
+                )
+              })
+            })()
           )}
         </div>
       </div>

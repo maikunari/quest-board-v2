@@ -29,12 +29,30 @@ export async function GET() {
       },
     })
 
-    const leaderboard = top20.map((user, index) => ({
+    const leaderboardBase = top20.map((user, index) => ({
       rank: index + 1,
       name: user.displayName || 'Adventurer',
       weeklyXp: user.weeklyXp,
       isCurrentUser: currentUser ? user.id === currentUser.id : false,
     }))
+
+    // Compute promotion/demotion zones
+    // Ascension Zone: top 3 entries
+    // Danger Zone: bottom 3 entries with XP > 0 (ascension takes priority if < 6 total with XP)
+    const usersWithXp = leaderboardBase.filter((e) => e.weeklyXp > 0)
+    const dangerSet = new Set(
+      usersWithXp.slice(-3).map((e) => e.rank)
+    )
+
+    const leaderboard = leaderboardBase.map((entry) => {
+      let zone: 'ascension' | 'danger' | null = null
+      if (entry.rank <= 3 && entry.weeklyXp > 0) {
+        zone = 'ascension'
+      } else if (dangerSet.has(entry.rank)) {
+        zone = 'danger'
+      }
+      return { ...entry, zone }
+    })
 
     // Determine current user info
     let currentUserData: { rank: number; weeklyXp: number } | null = null

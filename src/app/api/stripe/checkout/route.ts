@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
         email: user.email ?? undefined,
         metadata: {
           userId: user.id,
-          clerkId: user.clerkId,
         },
       })
       customerId = customer.id

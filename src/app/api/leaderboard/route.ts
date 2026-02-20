@@ -25,7 +25,6 @@ export async function GET() {
         id: true,
         displayName: true,
         weeklyXp: true,
-        clerkId: true,
       },
     })
 

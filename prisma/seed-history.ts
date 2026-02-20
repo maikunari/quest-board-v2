@@ -14,11 +14,18 @@ async function main() {
   ]
   
   for (const day of historicalDays) {
-    await prisma.dayStats.upsert({
-      where: { date: day.date },
-      update: { totalPoints: day.totalPoints, questsCompleted: day.questsCompleted, questsTotal: day.questsTotal },
-      create: day,
+    // Legacy seed data (no userId)
+    const existing = await prisma.dayStats.findFirst({
+      where: { date: day.date, userId: null },
     })
+    if (existing) {
+      await prisma.dayStats.update({
+        where: { id: existing.id },
+        data: { totalPoints: day.totalPoints, questsCompleted: day.questsCompleted, questsTotal: day.questsTotal },
+      })
+    } else {
+      await prisma.dayStats.create({ data: day })
+    }
     console.log(`Seeded ${day.date.toISOString().split('T')[0]}: ${day.totalPoints} pts`)
   }
   

@@ -7,6 +7,77 @@ datasource db {
   url       = env("DATABASE_URL")
 }
 
+// ─── Auth ───────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique    // Clerk user ID (user_xxx)
+  email         String?
+  displayName   String?
+  avatarUrl     String?
+  plan          Plan      @default(FREE)
+  stripeCustomerId    String?   @unique
+  stripeSubscriptionId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  soundEnabled  Boolean   @default(true)
+  streakFreezes Int       @default(0)     // available streak freezes (Pro: 1/week)
+  lastLoginDate DateTime? @db.Date        // for login streak tracking
+  
+  // ─── Streak Extensions ───
+  shieldActive  Boolean   @default(false)
+  shieldUsedAt  DateTime?
+  comebackBonusExpires DateTime?
+  weeklyXp      Int       @default(0)
+  timezone      String    @default("UTC")
+
+  quests        Quest[]
+  completions   Completion[]
+  dayStats      DayStats[]
+  dailyTemplates DailyTemplate[]
+  achievements  UserAchievement[]
+  streak        Streak?
+
+  @@index([clerkId])
+}
+
+// ─── Streaks ────────────────────────────────────────
+
+model Streak {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  lastActiveDate DateTime? @db.Date
+  frozenToday   Boolean  @default(false) // streak freeze used today
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ─── Achievements ───────────────────────────────────
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String   // key into ACHIEVEMENTS constant
+  unlockedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+enum Plan {
+  FREE
+  PRO
+  TEAMS
+}
+
+// ─── Quests ─────────────────────────────────────────
+
 enum QuestType {
   main
   side
@@ -15,6 +86,7 @@ enum QuestType {
 
 model Quest {
   id          String      @id @default(cuid())
+  userId      String?     // null for legacy/migration quests
   date        DateTime    @db.Date
   type        QuestType
   title       String
@@ -27,41 +99,51 @@ model Quest {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  user        User?       @relation(fields: [userId], references: [id])
   completions Completion[]
 
   @@index([date])
   @@index([type])
   @@index([asanaTaskId])
+  @@index([userId, date])
 }
 
 model Completion {
   id          String   @id @default(cuid())
+  userId      String?  // null for legacy
   visitorId   String   @default("default")
   questId     String
   date        DateTime @db.Date
   completedAt DateTime @default(now())
 
-  quest Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
+  user  User?  @relation(fields: [userId], references: [id])
+  quest Quest  @relation(fields: [questId], references: [id], onDelete: Cascade)
 
   @@unique([visitorId, questId, date])
   @@index([date])
   @@index([questId])
+  @@index([userId, date])
 }
 
 model DayStats {
   id              String   @id @default(cuid())
-  date            DateTime @unique @db.Date
+  userId          String?  // null for legacy
+  date            DateTime @db.Date
   totalPoints     Int      @default(0)
   questsCompleted Int      @default(0)
   questsTotal     Int      @default(0)
   updatedAt       DateTime @updatedAt
 
+  user User? @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
   @@index([date])
 }
 
 // Daily quest templates - auto-created each day
 model DailyTemplate {
   id          String   @id @default(cuid())
+  userId      String?  // null = global templates, set = user-specific
   title       String
   subtitle    String?
   description String?
@@ -71,4 +153,18 @@ model DailyTemplate {
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+// ─── Contact Messages ───────────────────────────────
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
 }

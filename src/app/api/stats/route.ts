@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireUser } from '@/lib/auth'
 import { startOfWeek, endOfWeek, subDays, format } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
@@ -7,6 +8,9 @@ export const dynamic = 'force-dynamic'
 // GET /api/stats
 export async function GET(request: NextRequest) {
   try {
+    const user = await requireUser()
+    const userScope = { OR: [{ userId: user.id }, { userId: null }] }
+
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
@@ -15,8 +19,8 @@ export async function GET(request: NextRequest) {
 
     // Today's quests and completions
     const todayQuests = await prisma.quest.findMany({
-      where: { date: today },
-      include: { completions: { where: { date: today } } },
+      where: { date: today, ...userScope },
+      include: { completions: { where: { date: today, OR: [{ userId: user.id }, { userId: null }] } } },
     })
 
     const todayPoints = todayQuests
@@ -27,51 +31,35 @@ export async function GET(request: NextRequest) {
     const weekStats = await prisma.dayStats.findMany({
       where: {
         date: { gte: weekStart, lte: weekEnd },
+        ...userScope,
       },
     })
     const weekPoints = weekStats.reduce((sum, s) => sum + s.totalPoints, 0) + todayPoints
 
-    // Streak calculation
-    let streak = 0
-    let checkDate = subDays(today, 1)
-
-    // Check if today has any completions
-    const todayHasCompletions = todayQuests.some(q => q.completions.length > 0)
-    if (todayHasCompletions) {
-      streak = 1
-    }
-
-    // Check previous days
-    for (let i = 0; i < 365; i++) {
-      const dayStats = await prisma.dayStats.findUnique({
-        where: { date: checkDate },
-      })
-
-      if (dayStats && dayStats.questsCompleted > 0) {
-        streak++
-        checkDate = subDays(checkDate, 1)
-      } else {
-        break
-      }
-    }
+    // Streak from dedicated model (fast!)
+    const streakRecord = await prisma.streak.findUnique({ where: { userId: user.id } })
+    const streak = streakRecord?.currentStreak || 0
 
     // Total points all time
     const allStats = await prisma.dayStats.aggregate({
+      where: userScope,
       _sum: { totalPoints: true },
     })
-    const totalPoints = (allStats._sum.totalPoints || 0) + todayPoints
+    const totalPoints = (allStats._sum?.totalPoints || 0) + todayPoints
 
     // Last 30 days for chart
     const thirtyDaysAgo = subDays(today, 29)
     const last30 = await prisma.dayStats.findMany({
       where: {
         date: { gte: thirtyDaysAgo, lte: today },
+        ...userScope,
       },
       orderBy: { date: 'asc' },
     })
 
-    // Best streak (from day stats)
+    // Best streak
     const allDayStats = await prisma.dayStats.findMany({
+      where: userScope,
       orderBy: { date: 'asc' },
     })
 
@@ -147,6 +135,9 @@ export async function GET(request: NextRequest) {
       })),
     })
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     console.error('Error fetching stats:', error)
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 })
   }

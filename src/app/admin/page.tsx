@@ -57,7 +57,7 @@ export default function AdminPage() {
   const fetchQuests = async () => {
     const res = await fetch(`/api/quests?date=${selectedDate}`)
     const data = await res.json()
-    setQuests(data)
+    setQuests(Array.isArray(data) ? data : [])
   }
 
   const showMessage = (text: string, type: 'success' | 'error') => {

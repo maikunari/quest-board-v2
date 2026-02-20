@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useAuth } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { Sword, TrendUp, Flame, LinkSimple, Palette, CastleTurret } from '@phosphor-icons/react'
 import FloatingParticles from '@/components/FloatingParticles'
@@ -89,7 +89,7 @@ const pricingTiers = [
 ]
 
 export default function LandingPage() {
-  const { isSignedIn } = useAuth()
+  const { status } = useSession()
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-quest-dark dark:to-gray-950 text-slate-800 dark:text-white overflow-hidden relative">
@@ -133,7 +133,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            {isSignedIn ? (
+            {status === 'authenticated' ? (
               <Link
                 href="/quests"
                 className="px-8 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-all hover:scale-105"
@@ -143,13 +143,13 @@ export default function LandingPage() {
             ) : (
               <>
                 <Link
-                  href="/sign-up"
+                  href="/login"
                   className="px-8 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-all hover:scale-105"
                 >
                   Begin Your Adventure
                 </Link>
                 <Link
-                  href="/sign-in"
+                  href="/login"
                   className="px-8 py-4 border border-amber-400/50 dark:border-quest-gold/50 text-amber-600 dark:text-quest-gold font-pixel text-sm rounded-lg hover:bg-amber-50 dark:hover:bg-quest-gold/10 transition-all"
                 >
                   Sign In
@@ -288,7 +288,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
                 <Link
-                  href={isSignedIn ? (tier.plan === 'FREE' ? '/quests' : '/pricing') : '/sign-up'}
+                  href={status === 'authenticated' ? (tier.plan === 'FREE' ? '/quests' : '/pricing') : '/login'}
                   className={`block text-center py-3 rounded-lg font-semibold text-sm transition-all ${
                     tier.highlighted
                       ? 'bg-quest-gold text-black hover:bg-amber-300'
@@ -318,10 +318,10 @@ export default function LandingPage() {
             Free forever. No credit card required. Start turning your tasks into quests today.
           </p>
           <Link
-            href={isSignedIn ? '/quests' : '/sign-up'}
+            href={status === 'authenticated' ? '/quests' : '/login'}
             className="inline-block px-10 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-all hover:scale-105"
           >
-            {isSignedIn ? 'Enter Quest Board →' : 'Begin Your Adventure'}
+            {status === 'authenticated' ? 'Enter Quest Board →' : 'Begin Your Adventure'}
           </Link>
         </motion.div>
       </section>

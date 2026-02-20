@@ -14,7 +14,7 @@ export default function LoginPage() {
           <form
             action={async () => {
               "use server"
-              await signIn("google", { redirectTo: "/" })
+              await signIn("google", { redirectTo: "/quests" })
             }}
           >
             <button
@@ -46,7 +46,7 @@ export default function LoginPage() {
           <form
             action={async () => {
               "use server"
-              await signIn("github", { redirectTo: "/" })
+              await signIn("github", { redirectTo: "/quests" })
             }}
           >
             <button

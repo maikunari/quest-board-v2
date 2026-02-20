@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Press_Start_2P } from 'next/font/google'
 import './globals.css'
 import Navigation from '@/components/Navigation'
-import { ThemeProvider } from '@/components/ThemeProvider'
+import Providers from '@/components/Providers'
 
 const pressStart = Press_Start_2P({ 
   weight: '400',
@@ -26,12 +26,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={pressStart.variable}>
       <body className="min-h-screen bg-quest-light-bg dark:bg-quest-dark text-slate-800 dark:text-white">
-        <ThemeProvider>
+        <Providers>
           <Navigation />
           <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
             {children}
           </main>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -59,12 +59,13 @@ const tiers = [
 ]
 
 export default function PricingPage() {
-  const { isSignedIn } = useUser()
+  const { status } = useSession()
   const [loading, setLoading] = useState<string | null>(null)
+  const isSignedIn = status === 'authenticated'
 
   async function handleUpgrade(plan: string) {
     if (!isSignedIn) {
-      window.location.href = '/sign-up'
+      window.location.href = '/login'
       return
     }
     if (plan === 'FREE') return

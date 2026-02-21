@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/auth'
+import { prisma } from '@/lib/prisma'
 
 // GET /api/asana/tasks - Fetch tasks from Asana
 // Fetches all incomplete tasks assigned to the user in the workspace
 export async function GET(request: NextRequest) {
   try {
-    const token = process.env.ASANA_TOKEN
+    // Per-user token takes priority; fall back to server env var
+    let token: string | null | undefined = process.env.ASANA_TOKEN
     const workspaceGid = process.env.ASANA_WORKSPACE_GID
+
+    const session = await auth()
+    if (session?.user?.id) {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { asanaToken: true },
+      })
+      if (user?.asanaToken) {
+        token = user.asanaToken
+      }
+    }
 
     if (!token) {
       return NextResponse.json({ error: 'ASANA_TOKEN not configured' }, { status: 400 })

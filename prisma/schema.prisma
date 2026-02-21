@@ -27,6 +27,8 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  asanaToken    String?   // Per-user Asana Personal Access Token
+
   soundEnabled  Boolean   @default(true)
   streakFreezes Int       @default(0)     // available streak freezes (Pro: 1/week)
   lastLoginDate DateTime? @db.Date        // for login streak tracking

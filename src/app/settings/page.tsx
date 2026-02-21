@@ -67,12 +67,22 @@ function AsanaConnection() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [workspaceName, setWorkspaceName] = useState<string | null>(null)
   const [taskCount, setTaskCount] = useState<number | null>(null)
+  const [tokenInput, setTokenInput] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [disconnecting, setDisconnecting] = useState(false)
+  const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     checkConnection()
   }, [])
 
   async function checkConnection() {
+    setStatus('loading')
+    setUserEmail(null)
+    setWorkspaceName(null)
+    setTaskCount(null)
     try {
       const res = await fetch('/api/asana/status')
       if (!res.ok) {
@@ -93,16 +103,76 @@ function AsanaConnection() {
     }
   }
 
+  async function saveToken() {
+    if (!tokenInput.trim()) return
+    setSaving(true)
+    setSaveError(null)
+    setTestResult(null)
+    try {
+      const res = await fetch('/api/settings/asana', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: tokenInput.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setSaveError(data.error || 'Failed to save token')
+      } else {
+        setTokenInput('')
+        await checkConnection()
+      }
+    } catch {
+      setSaveError('Failed to save token')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function testConnection() {
+    setTesting(true)
+    setTestResult(null)
+    try {
+      const res = await fetch('/api/asana/status')
+      const data = await res.json()
+      if (data.connected) {
+        setTestResult({ ok: true, message: `✅ Connected as ${data.email}` })
+      } else {
+        setTestResult({ ok: false, message: '❌ Invalid token or connection failed' })
+      }
+    } catch {
+      setTestResult({ ok: false, message: '❌ Connection test failed' })
+    } finally {
+      setTesting(false)
+    }
+  }
+
+  async function disconnect() {
+    if (!confirm('Disconnect Asana? You can reconnect anytime.')) return
+    setDisconnecting(true)
+    setTestResult(null)
+    try {
+      await fetch('/api/settings/asana', { method: 'DELETE' })
+      setStatus('disconnected')
+      setUserEmail(null)
+      setWorkspaceName(null)
+      setTaskCount(null)
+    } catch {
+      // ignore
+    } finally {
+      setDisconnecting(false)
+    }
+  }
+
   return (
     <section className="quest-card p-6 mb-6">
-      <h2 className="text-lg font-semibold mb-2">🔗 Asana Integration</h2>
+      <h2 className="text-lg font-semibold mb-4">🔗 Asana Integration</h2>
 
       {status === 'loading' && (
         <p className="text-sm text-slate-500 dark:text-slate-400">Checking connection...</p>
       )}
 
       {status === 'connected' && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500" />
             <span className="text-sm font-medium text-green-600 dark:text-green-400">Connected</span>
@@ -122,55 +192,75 @@ function AsanaConnection() {
               {taskCount} incomplete task{taskCount !== 1 ? 's' : ''} assigned to you
             </p>
           )}
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
+          {testResult && (
+            <p className={`text-sm font-medium ${testResult.ok ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              {testResult.message}
+            </p>
+          )}
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={testConnection}
+              disabled={testing}
+              className="btn-secondary text-sm"
+            >
+              {testing ? '⏳ Testing...' : '🔌 Test Connection'}
+            </button>
+            <button
+              onClick={disconnect}
+              disabled={disconnecting}
+              className="px-3 py-1.5 rounded-lg text-sm bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 transition-colors"
+            >
+              {disconnecting ? 'Disconnecting...' : '🔓 Disconnect'}
+            </button>
+          </div>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             Import tasks from the Admin page → &quot;Import from Asana&quot;
           </p>
         </div>
       )}
 
       {status === 'disconnected' && (
-        <div className="space-y-3">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Connect Asana to import your tasks as quests. You need a Personal Access Token.
-          </p>
-          <div className="bg-slate-50 dark:bg-quest-dark rounded-lg p-4 text-sm space-y-3 border border-slate-200 dark:border-white/10">
-            <p className="font-medium">Setup steps:</p>
-            <ol className="list-decimal list-inside space-y-2 text-slate-600 dark:text-slate-400">
-              <li>
-                Go to{' '}
-                <a
-                  href="https://app.asana.com/0/my-apps"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-violet-600 dark:text-violet-400 underline"
-                >
-                  Asana Developer Console
-                </a>
-              </li>
-              <li>Click <strong>&quot;Create new token&quot;</strong> and copy it</li>
-              <li>
-                Set these environment variables on your server / Vercel:
-                <code className="block mt-1 bg-slate-200 dark:bg-white/5 rounded px-2 py-1 text-xs font-mono">
-                  ASANA_TOKEN=&quot;your_personal_access_token&quot;
-                </code>
-              </li>
-              <li>
-                Find your Workspace GID (it&apos;s in the URL when you open Asana, or use the API):
-                <code className="block mt-1 bg-slate-200 dark:bg-white/5 rounded px-2 py-1 text-xs font-mono">
-                  ASANA_WORKSPACE_GID=&quot;your_workspace_gid&quot;
-                </code>
-              </li>
-              <li>Redeploy your app, then come back here</li>
-            </ol>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-slate-400" />
+            <span className="text-sm text-slate-500 dark:text-slate-400">Not connected</span>
           </div>
-          <a
-            href="https://app.asana.com/0/my-apps"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary inline-block text-sm"
-          >
-            Get Asana Token →
-          </a>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Paste your Asana Personal Access Token to connect your account.{' '}
+            <a
+              href="https://app.asana.com/0/my-apps"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-violet-600 dark:text-violet-400 underline"
+            >
+              Get a token →
+            </a>
+          </p>
+          <div className="space-y-2">
+            <input
+              type="password"
+              value={tokenInput}
+              onChange={(e) => { setTokenInput(e.target.value); setSaveError(null) }}
+              className="input-field font-mono text-sm"
+              placeholder="1/1234567890abcdef:..."
+              autoComplete="off"
+            />
+            {saveError && (
+              <p className="text-sm text-red-600 dark:text-red-400">{saveError}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={saveToken}
+                disabled={saving || !tokenInput.trim()}
+                className="btn-primary text-sm"
+              >
+                {saving ? '⏳ Saving...' : '🔗 Connect Asana'}
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            Your token is stored securely and never exposed to the browser.
+          </p>
         </div>
       )}
 
@@ -181,15 +271,10 @@ function AsanaConnection() {
             <span className="text-sm font-medium text-red-600 dark:text-red-400">Connection error</span>
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Your Asana token may be invalid or expired. Generate a new one at{' '}
-            <a
-              href="https://app.asana.com/0/my-apps"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-violet-600 dark:text-violet-400 underline"
-            >
-              Asana Developer Console
-            </a>
+            Something went wrong checking your connection.{' '}
+            <button onClick={checkConnection} className="text-violet-600 dark:text-violet-400 underline">
+              Try again
+            </button>
           </p>
         </div>
       )}

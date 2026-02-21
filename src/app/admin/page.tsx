@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { format, subDays, addDays } from 'date-fns'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useSession } from 'next-auth/react'
 
 interface Quest {
   id: string
@@ -39,6 +40,7 @@ const defaultQuest = {
 const emojiOptions = ['⚔️', '🏰', '🎯', '🚀', '💻', '📧', '📊', '🎨', '📝', '🔧', '🌐', '📱', '🎮', '💡', '🔥', '⭐', '🎪', '🛡️', '📚', '🧹']
 
 export default function AdminPage() {
+  const { data: session, status: sessionStatus } = useSession()
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [quests, setQuests] = useState<Quest[]>([])
   const [editingQuest, setEditingQuest] = useState<Partial<Quest> | null>(null)
@@ -176,6 +178,26 @@ export default function AdminPage() {
   const mainQuests = quests.filter(q => q.type === 'main')
   const sideQuests = quests.filter(q => q.type === 'side')
   const dailyQuests = quests.filter(q => q.type === 'daily')
+
+  // Auth gate — must be logged in to access admin
+  if (sessionStatus === 'loading') {
+    return (
+      <div className="max-w-4xl mx-auto flex items-center justify-center py-20">
+        <p className="text-slate-500">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-20">
+        <p className="text-2xl mb-4">🔒</p>
+        <h1 className="text-xl font-bold mb-2">Sign in required</h1>
+        <p className="text-slate-500 mb-6">You need to be signed in to access the Quest Editor.</p>
+        <a href="/login" className="btn-primary">Sign in</a>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-4xl mx-auto">

@@ -1,8 +1,22 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@/auth'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
-  const token = process.env.ASANA_TOKEN
+  // Try to get per-user token first, fall back to env var
+  let token: string | null | undefined = process.env.ASANA_TOKEN
   const workspaceGid = process.env.ASANA_WORKSPACE_GID
+
+  const session = await auth()
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { asanaToken: true },
+    })
+    if (user?.asanaToken) {
+      token = user.asanaToken
+    }
+  }
 
   if (!token) {
     return NextResponse.json({ connected: false, reason: 'no_token' })

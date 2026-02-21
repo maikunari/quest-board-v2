@@ -107,6 +107,64 @@
   backdrop-filter: blur(4px);
 }
 
+/* ── Sage eye glow (violet pulse) ───────────────────────────────────────── */
+@keyframes sage-eye-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.8))
+            drop-shadow(0 0 20px rgba(139, 92, 246, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(139, 92, 246, 1))
+            drop-shadow(0 0 40px rgba(139, 92, 246, 0.7))
+            drop-shadow(0 0 60px rgba(109, 40, 217, 0.4));
+  }
+}
+
+.sage-eyes {
+  animation: sage-eye-pulse 2.5s ease-in-out infinite;
+}
+
+/* ── Sage aura / halo glow ──────────────────────────────────────────────── */
+@keyframes aura-pulse {
+  0%, 100% { box-shadow: 0 0 60px 20px rgba(109, 40, 217, 0.15); opacity: 0.6; }
+  50%       { box-shadow: 0 0 100px 40px rgba(139, 92, 246, 0.25); opacity: 1; }
+}
+
+.sage-aura {
+  animation: aura-pulse 3s ease-in-out infinite;
+  border-radius: 50%;
+}
+
+/* ── CTA shimmer ────────────────────────────────────────────────────────── */
+@keyframes cta-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.cta-shimmer {
+  background-image: linear-gradient(
+    105deg,
+    var(--tw-gradient-from, #7c3aed) 0%,
+    #a855f7 40%,
+    #c084fc 50%,
+    #a855f7 60%,
+    var(--tw-gradient-to, #7c3aed) 100%
+  );
+  background-size: 200% auto;
+  animation: cta-shimmer 3s linear infinite;
+}
+
+/* ── Scanlines ──────────────────────────────────────────────────────────── */
+.scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 1) 2px,
+    rgba(0, 0, 0, 1) 4px
+  );
+}
+
 /* Recharts customization */
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {

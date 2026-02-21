@@ -1,340 +1,485 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
-import { Sword, TrendUp, Flame, LinkSimple, Palette, CastleTurret } from '@phosphor-icons/react'
 import FloatingParticles from '@/components/FloatingParticles'
 
-const features = [
-  {
-    icon: Sword,
-    title: 'Quest System',
-    description: 'Transform every task into a quest. Main quests, side quests, dailies — just like your favorite RPG.',
-    rarity: 'Common',
-  },
-  {
-    icon: TrendUp,
-    title: 'XP & Levels',
-    description: 'Earn experience with every completed quest. Level up and watch your character grow stronger.',
-    rarity: 'Uncommon',
-  },
-  {
-    icon: Flame,
-    title: 'Streaks',
-    description: 'Build daily streaks for XP multipliers. 7 days = 2x, 30 days = 3x. Don\'t break the chain.',
-    rarity: 'Rare',
-  },
-  {
-    icon: LinkSimple,
-    title: 'Asana Integration',
-    description: 'Pull tasks from Asana automatically. Your project management tool meets gamification.',
-    rarity: 'Rare',
-  },
-  {
-    icon: Palette,
-    title: 'Custom Themes',
-    description: 'Dark mode, light mode, and custom color themes. Make your quest board truly yours.',
-    rarity: 'Epic',
-  },
-  {
-    icon: CastleTurret,
-    title: 'Guild Mode',
-    description: 'Create teams. Share quest boards. Compete on leaderboards. Conquer tasks together.',
-    rarity: 'Legendary',
-  },
+// ─── Rank progression data ────────────────────────────────────────────────────
+const ranks = [
+  { emoji: '🌱', name: 'Seedling',   xp: '0',      color: 'text-green-400',  border: 'border-green-500/40' },
+  { emoji: '🗡️', name: 'Adventurer', xp: '500',    color: 'text-blue-400',   border: 'border-blue-500/40' },
+  { emoji: '⚔️',  name: 'Warrior',   xp: '1,500',  color: 'text-violet-400', border: 'border-violet-500/40' },
+  { emoji: '🧝',  name: 'Ranger',    xp: '3,000',  color: 'text-amber-400',  border: 'border-amber-500/40' },
+  { emoji: '🏆',  name: 'Champion',  xp: '6,000',  color: 'text-yellow-300', border: 'border-yellow-400/60' },
 ]
 
-const rarityColors: Record<string, string> = {
-  Common: 'text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600',
-  Uncommon: 'text-green-600 dark:text-green-400 border-green-300 dark:border-green-600',
-  Rare: 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600',
-  Epic: 'text-purple-600 dark:text-purple-400 border-purple-300 dark:border-purple-600',
-  Legendary: 'text-yellow-600 dark:text-yellow-400 border-yellow-300 dark:border-yellow-600',
+// ─── Animation helpers ────────────────────────────────────────────────────────
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 }
 
-const stats = [
-  { label: 'Quests Completed', value: '12,847' },
-  { label: 'Active Adventurers', value: '342' },
-  { label: 'Levels Gained', value: '1,205' },
-]
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+}
 
-const pricingTiers = [
-  {
-    plan: 'FREE',
-    name: '🗡️ Adventurer',
-    price: 0,
-    difficulty: 'Easy',
-    features: ['Solo quest board', '1 integration', 'Basic themes', 'Streaks & XP'],
-    cta: 'Start Free',
-  },
-  {
-    plan: 'PRO',
-    name: '⚔️ Champion',
-    price: 5,
-    difficulty: 'Normal',
-    features: ['Unlimited integrations', 'Custom themes', 'Advanced stats', 'Streak freeze'],
-    cta: 'Level Up',
-    highlighted: true,
-  },
-  {
-    plan: 'TEAMS',
-    name: '🏰 Guild Master',
-    price: 8,
-    difficulty: 'Legendary',
-    features: ['Shared boards', 'Team analytics', 'Guild challenges', 'Admin controls'],
-    cta: 'Form Guild',
-    perUser: true,
-  },
-]
-
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const { status } = useSession()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-quest-dark dark:to-gray-950 text-slate-800 dark:text-white overflow-hidden relative">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0a0612] text-white">
       <FloatingParticles />
-      {/* Hero */}
-      <section className="relative px-4 pt-20 pb-24">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-quest-gold/5 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-4xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h1
-              className="font-pixel text-4xl sm:text-5xl md:text-6xl text-amber-600 dark:text-quest-gold mb-6 leading-tight"
-              style={{ textShadow: '0 0 40px rgba(246, 201, 14, 0.4)' }}
-            >
-              Your Tasks Are Boring
-            </h1>
-            <p
-              className="font-pixel text-lg sm:text-xl md:text-2xl text-amber-600/80 dark:text-quest-gold/80 mb-4"
-              style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.2)' }}
-            >
-              Make Them Legendary
-            </p>
-          </motion.div>
 
-          <motion.p
-            className="text-lg md:text-xl text-slate-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            Turn your to-do list into an RPG. Earn XP, level up, build streaks,
-            and conquer your tasks like a hero. Integrates with the tools you already use.
-          </motion.p>
+      {/* ── Scanline overlay ─────────────────────────────────────────────── */}
+      <div className="pointer-events-none fixed inset-0 z-0 scanlines opacity-[0.03]" aria-hidden />
 
-          <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            {status === 'authenticated' ? (
-              <Link
-                href="/quests"
-                className="px-8 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-all hover:scale-105"
-              >
-                Enter Quest Board →
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="px-8 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-all hover:scale-105"
-                >
-                  Begin Your Adventure
-                </Link>
-                <Link
-                  href="/login"
-                  className="px-8 py-4 border border-amber-400/50 dark:border-quest-gold/50 text-amber-600 dark:text-quest-gold font-pixel text-sm rounded-lg hover:bg-amber-50 dark:hover:bg-quest-gold/10 transition-all"
-                >
-                  Sign In
-                </Link>
-              </>
-            )}
-          </motion.div>
+      {/* ════════════════════════════════════════════════════════════════════
+          HERO
+      ════════════════════════════════════════════════════════════════════ */}
+      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 pb-16 pt-20 text-center">
+        {/* Deep violet radial backdrop */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_60%,rgba(109,40,217,0.18)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_50%_30%,rgba(139,92,246,0.12)_0%,transparent_60%)]" />
         </div>
-      </section>
 
-      {/* Stats Bar */}
-      <section className="border-y border-slate-200 dark:border-gray-800 bg-slate-50/50 dark:bg-gray-900/50 backdrop-blur">
-        <div className="mx-auto max-w-4xl px-4 py-8 flex justify-center gap-12 md:gap-20">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              className="text-center"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-quest-gold">{stat.value}</div>
-              <div className="text-xs text-slate-400 dark:text-gray-500 mt-1">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features — RPG Item Cards */}
-      <section className="px-4 py-24">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="font-pixel text-2xl text-center text-amber-600 dark:text-quest-gold mb-4"
-              style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.3)' }}>
-            Abilities & Loot
-          </h2>
-          <p className="text-center text-slate-400 dark:text-gray-500 mb-16">Everything you need to turn productivity into an adventure</p>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                className={`relative rounded-xl border bg-white/60 dark:bg-gray-900/60 p-6 transition-all hover:-translate-y-1 hover:shadow-lg ${rarityColors[feature.rarity]}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 }}
-                viewport={{ once: true }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <feature.icon size={32} weight="duotone" className="text-current" />
-                  <span className={`text-[10px] uppercase tracking-wider ${rarityColors[feature.rarity]}`}>
-                    {feature.rarity}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold mb-2 text-slate-800 dark:text-white">{feature.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-gray-400 leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="px-4 py-24 bg-slate-50/50 dark:bg-gray-900/30">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="font-pixel text-2xl text-center text-amber-600 dark:text-quest-gold mb-16"
-              style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.3)' }}>
-            How It Works
-          </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              { step: '1', title: 'Add Quests', desc: 'Create tasks or import from Asana. Each becomes a quest with XP rewards.' },
-              { step: '2', title: 'Complete & Level Up', desc: 'Check off quests to earn XP. Build streaks for multipliers. Watch your level grow.' },
-              { step: '3', title: 'Track Progress', desc: 'Stats, history, and achievements. See how productive you really are.' },
-            ].map((item, i) => (
-              <motion.div
-                key={item.step}
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.15 }}
-                viewport={{ once: true }}
-              >
-                <div className="w-12 h-12 rounded-full bg-amber-50 dark:bg-quest-gold/10 border border-amber-200 dark:border-quest-gold/30 flex items-center justify-center mx-auto mb-4">
-                  <span className="font-pixel text-amber-600 dark:text-quest-gold text-sm">{item.step}</span>
-                </div>
-                <h3 className="font-bold text-slate-800 dark:text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-gray-400">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section className="px-4 py-24">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="font-pixel text-2xl text-center text-amber-600 dark:text-quest-gold mb-4"
-              style={{ textShadow: '0 0 20px rgba(246, 201, 14, 0.3)' }}>
-            Choose Your Difficulty
-          </h2>
-          <p className="text-center text-slate-400 dark:text-gray-500 mb-16">Start free. Upgrade when you're ready for more power.</p>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {pricingTiers.map((tier, i) => (
-              <motion.div
-                key={tier.plan}
-                className={`relative rounded-xl border p-6 flex flex-col ${
-                  tier.highlighted
-                    ? 'border-amber-400/50 dark:border-quest-gold/50 bg-amber-50/50 dark:bg-gray-900/80 shadow-lg shadow-amber-500/5 dark:shadow-quest-gold/5'
-                    : 'border-slate-200 dark:border-gray-700/50 bg-white/50 dark:bg-gray-900/50'
-                }`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                viewport={{ once: true }}
-              >
-                {tier.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-quest-gold text-black text-[10px] font-bold px-3 py-1 rounded-full font-pixel">
-                      POPULAR
-                    </span>
-                  </div>
-                )}
-                <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-gray-500 mb-1">{tier.difficulty}</p>
-                <h3 className="text-xl font-bold mb-1">{tier.name}</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-extrabold">${tier.price}</span>
-                  {tier.price > 0 && <span className="text-slate-400 dark:text-gray-500">/mo{tier.perUser ? '/user' : ''}</span>}
-                </div>
-                <ul className="space-y-2 mb-8 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300">
-                      <span className="text-green-500 dark:text-green-400">✓</span> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={status === 'authenticated' ? (tier.plan === 'FREE' ? '/quests' : '/pricing') : '/login'}
-                  className={`block text-center py-3 rounded-lg font-semibold text-sm transition-all ${
-                    tier.highlighted
-                      ? 'bg-quest-gold text-black hover:bg-amber-300'
-                      : 'bg-slate-200 dark:bg-gray-700 text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {tier.cta}
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="px-4 py-24 text-center">
+        {/* Sage — floats and glows */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          className="relative z-10 mb-6"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <h2 className="font-pixel text-3xl text-amber-600 dark:text-quest-gold mb-6"
-              style={{ textShadow: '0 0 30px rgba(246, 201, 14, 0.4)' }}>
-            Ready to Begin?
-          </h2>
-          <p className="text-slate-500 dark:text-gray-400 mb-8 max-w-lg mx-auto">
-            Free forever. No credit card required. Start turning your tasks into quests today.
-          </p>
-          <Link
-            href={status === 'authenticated' ? '/quests' : '/login'}
-            className="inline-block px-10 py-4 bg-quest-gold text-black font-pixel text-sm rounded-lg hover:bg-amber-300 transition-all hover:scale-105"
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative inline-block"
           >
-            {status === 'authenticated' ? 'Enter Quest Board →' : 'Begin Your Adventure'}
-          </Link>
+            {/* Glow ring behind sage */}
+            <div className="sage-aura absolute inset-0 rounded-full" />
+            <Image
+              src="/mascot/sage-default.png"
+              alt="The Hooded Sage"
+              width={220}
+              height={220}
+              priority
+              className="sage-eyes relative z-10 drop-shadow-[0_0_32px_rgba(139,92,246,0.7)] sm:w-[260px] md:w-[300px]"
+              style={{ width: 'auto', height: 'auto', maxWidth: '300px' }}
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Speech bubble */}
+        <motion.div
+          className="relative z-10 mb-8 max-w-xl"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
+          <div className="speech-bubble mx-auto inline-block rounded-2xl border border-violet-500/30 bg-violet-950/60 px-6 py-4 backdrop-blur-sm">
+            {/* Arrow pointing up */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 border-8 border-transparent border-b-violet-500/30" />
+            <p className="font-pixel text-[11px] leading-loose text-violet-200 sm:text-[13px]">
+              &ldquo;Every great adventure begins<br className="hidden sm:block" /> with a single quest...&rdquo;
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Main headline */}
+        <motion.h1
+          className="relative z-10 mb-3 font-pixel text-3xl leading-tight text-white sm:text-4xl md:text-5xl"
+          style={{ textShadow: '0 0 40px rgba(139,92,246,0.7)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.6 }}
+        >
+          Quest Board
+        </motion.h1>
+
+        <motion.p
+          className="relative z-10 mb-2 font-pixel text-xs text-violet-400 sm:text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+        >
+          Turn your boring tasks into epic adventures
+        </motion.p>
+
+        <motion.p
+          className="relative z-10 mb-10 max-w-lg text-base leading-relaxed text-gray-400"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1 }}
+        >
+          Earn XP, build streaks, rise through the ranks. The gamified productivity
+          tool built for people who actually want to get things done.
+        </motion.p>
+
+        {/* CTA */}
+        <motion.div
+          className="relative z-10 flex flex-col items-center gap-4 sm:flex-row"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2 }}
+        >
+          {status === 'authenticated' ? (
+            <Link href="/quests" className="cta-shimmer rounded-xl bg-violet-600 px-10 py-4 font-pixel text-[11px] text-white hover:bg-violet-500 transition-all hover:scale-105">
+              Enter Quest Board →
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="cta-shimmer rounded-xl bg-violet-600 px-10 py-4 font-pixel text-[11px] text-white hover:bg-violet-500 transition-all hover:scale-105 shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+              >
+                Begin Your Quest ✦
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-xl border border-violet-500/40 px-8 py-4 font-pixel text-[11px] text-violet-300 hover:bg-violet-950/60 transition-all"
+              >
+                Sign In
+              </Link>
+            </>
+          )}
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="flex flex-col items-center gap-1 text-violet-500/50">
+            <span className="font-pixel text-[8px]">scroll</span>
+            <span className="text-lg">↓</span>
+          </div>
         </motion.div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-gray-800 px-4 py-8 text-center text-xs text-slate-400 dark:text-gray-600">
-        <p>Quest Board — Turn your boring tasks into epic quests.</p>
-        <div className="flex justify-center gap-6 mt-3">
-          <Link href="/pricing" className="hover:text-slate-600 dark:hover:text-gray-400">Pricing</Link>
-          <Link href="/docs" className="hover:text-slate-600 dark:hover:text-gray-400">Docs</Link>
-          <Link href="/contact" className="hover:text-slate-600 dark:hover:text-gray-400">Contact</Link>
+      {/* ════════════════════════════════════════════════════════════════════
+          STATS BAR
+      ════════════════════════════════════════════════════════════════════ */}
+      <motion.section
+        className="border-y border-violet-900/40 bg-[#0d0920]/80 backdrop-blur"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+      >
+        <div className="mx-auto flex max-w-4xl justify-center gap-10 px-4 py-8 md:gap-20">
+          {[
+            { value: '12,847', label: 'Quests Completed' },
+            { value: '342',    label: 'Active Adventurers' },
+            { value: '1,205',  label: 'Levels Gained' },
+          ].map((s) => (
+            <motion.div key={s.label} className="text-center" variants={fadeInUp}>
+              <div className="font-pixel text-xl text-violet-300 md:text-2xl" style={{ textShadow: '0 0 16px rgba(139,92,246,0.6)' }}>
+                {s.value}
+              </div>
+              <div className="mt-1 text-xs text-gray-500">{s.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          SECTION 1 — Track Your Daily Quests
+      ════════════════════════════════════════════════════════════════════ */}
+      <SageSection
+        image="/mascot/sage-default.png"
+        imageAlt="Sage — daily quests"
+        imageLeft
+        title="Track Your Daily Quests"
+        quote="&ldquo;Even the mightiest hero needs a quest log. Write it. Do it. Conquer it.&rdquo;"
+      >
+        <p className="mb-6 text-gray-400 leading-relaxed">
+          Transform every task into a quest. Main quests, side quests, and daily
+          challenges — structured just like your favourite RPG. Complete them to earn
+          XP and unlock your next level.
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { icon: '⚔️', label: 'Main Quest', desc: 'High‑impact objectives' },
+            { icon: '📜', label: 'Side Quest', desc: 'Useful extras' },
+            { icon: '🔁', label: 'Daily Quest', desc: 'Repeatable habits' },
+            { icon: '⭐', label: 'XP Rewards', desc: 'Visible progress' },
+          ].map((item) => (
+            <div key={item.label} className="rounded-xl border border-violet-900/40 bg-[#110d24] p-4">
+              <span className="text-2xl">{item.icon}</span>
+              <div className="mt-2 font-semibold text-sm text-white">{item.label}</div>
+              <div className="text-xs text-gray-500">{item.desc}</div>
+            </div>
+          ))}
+        </div>
+      </SageSection>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          SECTION 2 — Build Unbreakable Streaks
+      ════════════════════════════════════════════════════════════════════ */}
+      <SageSection
+        image="/mascot/sage-triumph.png"
+        imageAlt="Sage — triumphant"
+        title="Build Unbreakable Streaks"
+        quote="&ldquo;Seven days of fire forges a warrior. Thirty days forges a legend.&rdquo;"
+        accent="amber"
+      >
+        <p className="mb-6 text-gray-400 leading-relaxed">
+          Daily streaks multiply your XP. Miss a day and the chain breaks. The longer
+          your streak, the greater the multiplier — and the greater the glory.
+        </p>
+        <div className="space-y-3">
+          {[
+            { days: '3',  mult: '1.5×', label: 'Ember',    color: 'text-orange-400', bar: 'bg-orange-500' },
+            { days: '7',  mult: '2×',   label: 'Inferno',  color: 'text-red-400',    bar: 'bg-red-500' },
+            { days: '30', mult: '3×',   label: 'Eternal',  color: 'text-violet-300', bar: 'bg-violet-500' },
+          ].map((tier) => (
+            <div key={tier.days} className="flex items-center gap-4 rounded-xl border border-white/5 bg-[#110d24] px-4 py-3">
+              <span className="font-pixel text-xs text-gray-400 w-10">{tier.days}d</span>
+              <div className="flex-1 h-2 rounded-full bg-white/5">
+                <div className={`h-full rounded-full ${tier.bar}`} style={{ width: `${(parseInt(tier.days)/30)*100}%` }} />
+              </div>
+              <span className={`font-pixel text-xs ${tier.color}`}>{tier.mult}</span>
+              <span className="text-xs text-gray-500 w-14">{tier.label}</span>
+            </div>
+          ))}
+        </div>
+      </SageSection>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          SECTION 3 — Rise Through the Ranks
+      ════════════════════════════════════════════════════════════════════ */}
+      <section className="px-4 py-24">
+        <div className="mx-auto max-w-4xl">
+          <motion.div
+            className="text-center mb-14"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <p className="mb-3 font-pixel text-[10px] text-violet-400 uppercase tracking-widest">Chapter III</p>
+            <h2 className="font-pixel text-2xl text-white mb-4" style={{ textShadow: '0 0 20px rgba(139,92,246,0.5)' }}>
+              Rise Through the Ranks
+            </h2>
+            <p className="text-gray-400 italic text-sm max-w-lg mx-auto">
+              &ldquo;The path from seedling to champion is paved with completed quests and unbroken will.&rdquo;
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="flex flex-wrap justify-center gap-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerContainer}
+          >
+            {ranks.map((rank, i) => (
+              <motion.div
+                key={rank.name}
+                variants={fadeInUp}
+                className={`flex flex-col items-center gap-2 rounded-2xl border ${rank.border} bg-[#0d0920] px-5 py-6 w-36`}
+              >
+                <span className="text-4xl">{rank.emoji}</span>
+                <span className={`font-pixel text-[10px] ${rank.color}`}>{rank.name}</span>
+                <span className="font-mono text-xs text-gray-500">{rank.xp} XP</span>
+                {i === ranks.length - 1 && (
+                  <span className="mt-1 rounded-full bg-yellow-400/10 px-2 py-0.5 text-[9px] font-pixel text-yellow-300 border border-yellow-400/30">
+                    LEGENDARY
+                  </span>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Arrow connector */}
+          <div className="mt-6 text-center text-2xl text-violet-700 select-none tracking-[12px]">
+            → → → → →
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          SECTION 4 — Connect Your Tools
+      ════════════════════════════════════════════════════════════════════ */}
+      <SageSection
+        image="/mascot/sage-default.png"
+        imageAlt="Sage — integrations"
+        imageLeft
+        title="Connect Your Tools"
+        quote="&ldquo;A wise adventurer uses every tool at their disposal. Your quests await, wherever they live.&rdquo;"
+      >
+        <p className="mb-6 text-gray-400 leading-relaxed">
+          Connect the tools you already use and watch your tasks become quests
+          automatically. No manual entry. No friction. Just progress.
+        </p>
+        <div className="space-y-3">
+          {[
+            { name: 'Asana',    icon: '🗂️', status: 'Connected', live: true  },
+            { name: 'Jira',     icon: '🐛', status: 'Coming Soon', live: false },
+            { name: 'Notion',   icon: '📓', status: 'Coming Soon', live: false },
+            { name: 'Linear',   icon: '📐', status: 'Coming Soon', live: false },
+          ].map((tool) => (
+            <div key={tool.name} className="flex items-center gap-4 rounded-xl border border-white/5 bg-[#110d24] px-4 py-3">
+              <span className="text-2xl">{tool.icon}</span>
+              <span className="flex-1 font-medium text-sm text-white">{tool.name}</span>
+              <span className={`rounded-full px-3 py-1 text-[10px] font-pixel ${
+                tool.live
+                  ? 'bg-green-500/10 text-green-400 border border-green-500/30'
+                  : 'bg-white/5 text-gray-500 border border-white/10'
+              }`}>
+                {tool.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </SageSection>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          SECTION 5 — Join the Guild
+      ════════════════════════════════════════════════════════════════════ */}
+      <section className="relative px-4 py-32 text-center overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_50%,rgba(109,40,217,0.2)_0%,transparent_70%)]" />
+        </div>
+
+        <motion.div
+          className="relative z-10 mx-auto max-w-2xl"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.4 }}
+          variants={fadeInUp}
+        >
+          {/* Sage triumphant */}
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="mb-8 inline-block"
+          >
+            <Image
+              src="/mascot/sage-triumph.png"
+              alt="Triumphant Sage"
+              width={160}
+              height={160}
+              className="sage-eyes mx-auto drop-shadow-[0_0_40px_rgba(139,92,246,0.8)]"
+              style={{ width: 'auto', height: 'auto', maxWidth: '160px' }}
+            />
+          </motion.div>
+
+          <p className="mb-2 font-pixel text-[10px] uppercase tracking-widest text-violet-400">
+            The Guild Awaits
+          </p>
+          <h2 className="mb-4 font-pixel text-2xl text-white md:text-3xl" style={{ textShadow: '0 0 30px rgba(139,92,246,0.6)' }}>
+            Join the Guild
+          </h2>
+          <p className="mb-4 text-sm italic text-violet-200">
+            &ldquo;No hero conquers alone. Join a guild, share your board, rise together.&rdquo;
+          </p>
+          <p className="mb-10 text-gray-400 leading-relaxed">
+            Free forever for solo adventurers. Upgrade to unlock unlimited integrations,
+            streak freezes, and guild mode for teams.
+          </p>
+
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link
+              href={status === 'authenticated' ? '/quests' : '/login'}
+              className="cta-shimmer rounded-xl bg-violet-600 px-10 py-4 font-pixel text-[11px] text-white transition-all hover:scale-105 hover:bg-violet-500 shadow-[0_0_40px_rgba(139,92,246,0.5)]"
+            >
+              {status === 'authenticated' ? 'Enter Quest Board →' : 'Begin Your Quest ✦'}
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-xl border border-violet-500/30 px-8 py-4 font-pixel text-[11px] text-violet-300 hover:bg-violet-950/50 transition-all"
+            >
+              View Pricing
+            </Link>
+          </div>
+
+          <p className="mt-6 text-xs text-gray-600">Free forever · No credit card required · 342 adventurers active</p>
+        </motion.div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          FOOTER
+      ════════════════════════════════════════════════════════════════════ */}
+      <footer className="border-t border-violet-900/30 px-4 py-10 text-center">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-4 font-pixel text-[10px] text-violet-500">⚔️ QUEST BOARD ⚔️</div>
+          <p className="mb-6 text-xs text-gray-600 italic">Built by adventurers, for adventurers.</p>
+          <div className="flex justify-center gap-8 text-xs text-gray-600">
+            <Link href="/pricing" className="hover:text-gray-400 transition-colors">Pricing</Link>
+            <Link href="/docs"    className="hover:text-gray-400 transition-colors">Docs</Link>
+            <Link href="/contact" className="hover:text-gray-400 transition-colors">Contact</Link>
+            <Link href="/login"   className="hover:text-gray-400 transition-colors">Login</Link>
+          </div>
+          <p className="mt-8 text-[10px] text-gray-700">© 2025 Quest Board. All rights reserved.</p>
         </div>
       </footer>
     </div>
+  )
+}
+
+// ─── Reusable sage narrator section ──────────────────────────────────────────
+interface SageSectionProps {
+  image: string
+  imageAlt: string
+  imageLeft?: boolean
+  title: string
+  quote: string
+  accent?: 'violet' | 'amber'
+  children: React.ReactNode
+}
+
+function SageSection({ image, imageAlt, imageLeft, title, quote, accent = 'violet', children }: SageSectionProps) {
+  const accentColor = accent === 'amber'
+    ? 'text-amber-400'
+    : 'text-violet-400'
+
+  const chapterIndex = { 'Track Your Daily Quests': 'I', 'Build Unbreakable Streaks': 'II', 'Connect Your Tools': 'IV' }
+
+  return (
+    <section className="px-4 py-24 border-t border-white/[0.03]">
+      <motion.div
+        className={`mx-auto max-w-5xl flex flex-col gap-12 ${imageLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-center`}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.25 }}
+        variants={staggerContainer}
+      >
+        {/* Sage image */}
+        <motion.div className="flex-shrink-0 text-center" variants={fadeInUp}>
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-block"
+          >
+            <Image
+              src={image}
+              alt={imageAlt}
+              width={180}
+              height={180}
+              className={`sage-eyes drop-shadow-[0_0_28px_rgba(139,92,246,0.6)] ${accent === 'amber' ? 'drop-shadow-[0_0_28px_rgba(251,191,36,0.5)]' : ''}`}
+              style={{ width: 'auto', height: 'auto', maxWidth: '180px' }}
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Content */}
+        <motion.div className="flex-1" variants={fadeInUp}>
+          <p className={`mb-2 font-pixel text-[10px] uppercase tracking-widest ${accentColor}`}>
+            Chapter {(chapterIndex as Record<string, string>)[title] ?? '?'}
+          </p>
+          <h2 className="mb-4 font-pixel text-xl text-white md:text-2xl" style={{ textShadow: '0 0 20px rgba(139,92,246,0.4)' }}>
+            {title}
+          </h2>
+          <p className={`mb-6 text-sm italic ${accentColor} opacity-80`} dangerouslySetInnerHTML={{ __html: quote }} />
+          {children}
+        </motion.div>
+      </motion.div>
+    </section>
   )
 }

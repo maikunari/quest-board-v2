@@ -51,7 +51,7 @@ export default function Navigation() {
                        />
                     )}
                     <button 
-                      onClick={() => signOut()}
+                      onClick={() => signOut({ callbackUrl: '/' })}
                       className="text-xs text-slate-400 hover:text-white transition-colors"
                     >
                       Sign Out

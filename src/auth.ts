@@ -29,5 +29,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = user.id
       return session
     },
+    // Protect routes matched by middleware — redirect unauthenticated users to /login
+    authorized({ auth: session }) {
+      return !!session
+    },
   },
 })

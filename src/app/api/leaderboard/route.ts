@@ -24,13 +24,14 @@ export async function GET() {
       select: {
         id: true,
         displayName: true,
+        name: true,
         weeklyXp: true,
       },
     })
 
     const leaderboardBase = top20.map((user, index) => ({
       rank: index + 1,
-      name: user.displayName || 'Adventurer',
+      name: user.displayName || user.name || 'Adventurer',
       weeklyXp: user.weeklyXp,
       isCurrentUser: currentUser ? user.id === currentUser.id : false,
     }))

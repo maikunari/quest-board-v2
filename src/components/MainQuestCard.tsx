@@ -102,7 +102,7 @@ export default function MainQuestCard({ quest, isCompleted, onToggle }: MainQues
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-200 dark:border-white/5">
           <span className="font-pixel text-sm text-quest-gold bg-amber-500/10 px-3 py-1.5 rounded-lg">
             +{quest.points} pts
           </span>

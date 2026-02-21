@@ -115,7 +115,7 @@ export default function LeaderboardPage() {
 
       {/* Nudge */}
       {activeNudge && (
-        <div className="mb-6 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-medium text-center">
+        <div className="mb-6 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-300 text-sm font-medium text-center">
           {activeNudge}
         </div>
       )}
@@ -201,7 +201,7 @@ export default function LeaderboardPage() {
                   ? 'bg-emerald-500/5 hover:bg-emerald-500/10'
                   : entry.zone === 'danger'
                   ? 'bg-red-500/5 hover:bg-red-500/10'
-                  : 'hover:bg-slate-50 dark:hover:bg-white/3'
+                  : 'hover:bg-slate-50 dark:hover:bg-white/5'
 
                 return (
                   <div
@@ -290,7 +290,7 @@ export default function LeaderboardPage() {
 
           {/* Nudge for out-of-top-20 user */}
           {nudge && (
-            <div className="mt-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-medium text-center">
+            <div className="mt-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-300 text-sm font-medium text-center">
               {nudge}
             </div>
           )}

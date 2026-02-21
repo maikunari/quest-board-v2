@@ -89,11 +89,11 @@ export default function StatsPage() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         <div className="quest-card p-5 text-center">
           <div className="text-3xl mb-1">{rank.emoji}</div>
-          <div className="text-sm text-slate-400">
-            Rank: <span className="text-white font-medium">{rank.label}</span>
+          <div className="text-sm text-slate-500 dark:text-slate-400">
+            Rank: <span className="text-slate-900 dark:text-white font-medium">{rank.label}</span>
           </div>
           {rank.next && (
-            <div className="text-xs text-slate-600 mt-1">
+            <div className="text-xs text-slate-500 dark:text-slate-600 mt-1">
               {rank.next - stats.weekPoints} pts to next rank
             </div>
           )}

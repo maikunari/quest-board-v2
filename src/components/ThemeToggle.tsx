@@ -13,7 +13,7 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <button className="p-2 rounded-lg bg-white/5 dark:bg-white/5 w-9 h-9" aria-label="Toggle theme">
+      <button className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 w-9 h-9" aria-label="Toggle theme">
         <span className="opacity-0">🌙</span>
       </button>
     )
@@ -40,7 +40,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={cycleTheme}
-      className="p-2 rounded-lg bg-white/5 hover:bg-white/10 dark:bg-white/5 dark:hover:bg-white/10 transition-colors text-sm"
+      className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 transition-colors text-sm border border-slate-200 dark:border-white/5"
       aria-label={`Theme: ${getLabel()}. Click to change.`}
       title={`${getLabel()} - Click to cycle`}
     >

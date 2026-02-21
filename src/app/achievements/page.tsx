@@ -73,7 +73,7 @@ export default function AchievementsPage() {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
               filter === cat
                 ? 'bg-quest-gold text-black'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                : 'bg-slate-200 text-slate-600 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700'
             }`}
           >
             {cat}
@@ -89,7 +89,7 @@ export default function AchievementsPage() {
             className={`rounded-xl border p-4 flex items-center gap-4 transition-all ${
               a.unlocked
                 ? `${RARITY_COLORS[a.rarity]} ${RARITY_BG[a.rarity]}`
-                : 'border-gray-700/30 bg-gray-900/30 opacity-40'
+                : 'border-slate-300 bg-slate-100 dark:border-gray-700/30 dark:bg-gray-900/30 opacity-40'
             }`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: a.unlocked ? 1 : 0.4, y: 0 }}
@@ -105,7 +105,7 @@ export default function AchievementsPage() {
                 </div>
               )}
             </div>
-            <div className={`text-[9px] uppercase tracking-wider ${a.unlocked ? RARITY_COLORS[a.rarity] : 'text-gray-600'}`}>
+            <div className={`text-[9px] uppercase tracking-wider ${a.unlocked ? RARITY_COLORS[a.rarity] : 'text-slate-400 dark:text-gray-600'}`}>
               {a.rarity}
             </div>
           </motion.div>

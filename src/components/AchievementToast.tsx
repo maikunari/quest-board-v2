@@ -38,8 +38,8 @@ export function AchievementToast({ achievement, onDismiss }: AchievementToastPro
               <div className="text-[10px] uppercase tracking-wider opacity-60">
                 Achievement Unlocked!
               </div>
-              <div className="font-bold text-white">{achievement.name}</div>
-              <div className="text-xs opacity-70">{achievement.description}</div>
+              <div className="font-bold text-slate-900 dark:text-white">{achievement.name}</div>
+              <div className="text-xs opacity-70 text-slate-700 dark:text-slate-300">{achievement.description}</div>
             </div>
           </div>
         </motion.div>

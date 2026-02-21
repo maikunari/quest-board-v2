@@ -21,7 +21,7 @@ export default function Navigation() {
   const { data: session, status } = useSession()
 
   return (
-    <nav className="border-b border-slate-200 dark:border-white/5 mb-8">
+    <nav className="border-b border-slate-200 dark:border-white/5 mb-8 bg-quest-light-bg/90 dark:bg-quest-dark/90 backdrop-blur-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* ── Brand / Logo ────────────────────────────────────────────── */}
@@ -32,10 +32,10 @@ export default function Navigation() {
             <Image
               src="/mascot/sage-default.png"
               alt="Quest Board Sage"
-              width={28}
-              height={28}
-              className="rounded-full object-cover opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-[0_0_6px_rgba(139,92,246,0.6)]"
-              style={{ width: 28, height: 28 }}
+              width={38}
+              height={38}
+              className="rounded-lg object-cover opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-[0_0_6px_rgba(139,92,246,0.6)]"
+              style={{ width: 38, height: 38 }}
             />
             <span
               className="font-pixel text-sm text-violet-600 dark:text-violet-300 hover:text-violet-700 dark:hover:text-violet-200 transition-colors"
@@ -67,12 +67,12 @@ export default function Navigation() {
                        <img 
                          src={session.user.image} 
                          alt={session.user.name || 'User'} 
-                         className="w-8 h-8 rounded-full border border-white/10"
+                         className="w-8 h-8 rounded-full border border-slate-200 dark:border-white/10"
                        />
                     )}
                     <button 
                       onClick={() => signOut({ callbackUrl: '/' })}
-                      className="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                      className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors"
                     >
                       Sign Out
                     </button>
@@ -81,9 +81,12 @@ export default function Navigation() {
               </>
             )}
             {status !== 'authenticated' && (
-              <Link href="/login" className="nav-link">
-                🔑 Sign In
-              </Link>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <Link href="/login" className="nav-link">
+                  🔑 Sign In
+                </Link>
+              </div>
             )}
           </div>
         </div>

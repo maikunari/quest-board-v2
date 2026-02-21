@@ -404,7 +404,7 @@ export default function AdminPage() {
                       onClick={() => setEditingQuest({ ...editingQuest, icon: emoji })}
                       className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-all ${
                         editingQuest.icon === emoji
-                          ? 'bg-violet-600 ring-2 ring-violet-400'
+                          ? 'bg-violet-600 ring-2 ring-violet-400 text-white'
                           : 'bg-slate-100 hover:bg-slate-200 dark:bg-quest-dark dark:hover:bg-quest-hover'
                       }`}
                     >
@@ -479,13 +479,13 @@ export default function AdminPage() {
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => { setEditingQuest(quest); setIsCreating(false) }}
-                        className="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs"
+                        className="px-2 py-1 rounded bg-slate-200 hover:bg-slate-300 dark:bg-white/5 dark:hover:bg-white/10 text-xs"
                       >
                         ✏️
                       </button>
                       <button
                         onClick={() => deleteQuest(quest.id)}
-                        className="px-2 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs"
+                        className="px-2 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 text-xs"
                       >
                         🗑️
                       </button>

@@ -98,11 +98,11 @@ export default function HistoryPage() {
   }
 
   const getIntensity = (points: number) => {
-    if (points === 0) return 'bg-quest-dark'
-    if (points < 10) return 'bg-violet-900/40'
-    if (points < 20) return 'bg-violet-800/50'
-    if (points < 30) return 'bg-violet-700/60'
-    return 'bg-violet-600/70'
+    if (points === 0) return 'bg-slate-100 dark:bg-quest-dark'
+    if (points < 10) return 'bg-violet-200/70 dark:bg-violet-900/40'
+    if (points < 20) return 'bg-violet-300/70 dark:bg-violet-800/50'
+    if (points < 30) return 'bg-violet-400/60 dark:bg-violet-700/60'
+    return 'bg-violet-500/70 dark:bg-violet-600/70'
   }
 
   return (
@@ -152,7 +152,7 @@ export default function HistoryPage() {
                   future ? 'opacity-20 cursor-default' : 'cursor-pointer hover:ring-1 hover:ring-violet-500/50'
                 } ${isSelected ? 'ring-2 ring-violet-500' : ''} ${getIntensity(points)}`}
               >
-                <span className={`${today ? 'text-quest-gold font-bold' : 'text-slate-400'}`}>
+                <span className={`${today ? 'text-quest-gold font-bold' : 'text-slate-600 dark:text-slate-400'}`}>
                   {format(day, 'd')}
                 </span>
                 {points > 0 && (
@@ -198,12 +198,12 @@ export default function HistoryPage() {
                   return (
                     <div
                       key={quest.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg bg-quest-dark ${
+                      className={`flex items-center gap-3 p-3 rounded-lg bg-slate-100 dark:bg-quest-dark ${
                         isComplete ? 'opacity-100' : 'opacity-50'
                       }`}
                     >
                       <span className={`w-6 h-6 rounded flex items-center justify-center text-xs ${
-                        isComplete ? 'bg-quest-green text-white' : 'border border-slate-600'
+                        isComplete ? 'bg-quest-green text-white' : 'border border-slate-400 dark:border-slate-600'
                       }`}>
                         {isComplete ? '✓' : ''}
                       </span>
@@ -213,11 +213,11 @@ export default function HistoryPage() {
                           {quest.title}
                         </div>
                         {quest.subtitle && (
-                          <div className="text-xs text-slate-600">{quest.subtitle}</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-600">{quest.subtitle}</div>
                         )}
                       </div>
                       <span className={`font-pixel text-xs ${
-                        isComplete ? 'text-quest-gold' : 'text-slate-600'
+                        isComplete ? 'text-quest-gold' : 'text-slate-500 dark:text-slate-600'
                       }`}>
                         {isComplete ? '+' : ''}{quest.points}
                       </span>

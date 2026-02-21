@@ -465,7 +465,7 @@ export default function SettingsPage() {
                         key={emoji}
                         onClick={() => setEditing({ ...editing, icon: emoji })}
                         className={`w-8 h-8 rounded flex items-center justify-center ${
-                          editing.icon === emoji ? 'bg-violet-600 ring-2 ring-violet-400' : 'bg-slate-200 dark:bg-quest-hover'
+                          editing.icon === emoji ? 'bg-violet-600 ring-2 ring-violet-400 text-white' : 'bg-slate-200 hover:bg-slate-300 dark:bg-quest-hover dark:hover:bg-quest-hover/80'
                         }`}
                       >
                         {emoji}
@@ -507,13 +507,13 @@ export default function SettingsPage() {
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => { setEditing(template); setIsCreating(false) }}
-                    className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-xs"
+                    className="px-2 py-1 rounded bg-slate-200 hover:bg-slate-300 dark:bg-white/10 dark:hover:bg-white/20 text-xs"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => deleteTemplate(template.id)}
-                    className="px-2 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs"
+                    className="px-2 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 text-xs"
                   >
                     🗑️
                   </button>

@@ -23,6 +23,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  // ─── Trial / Onboarding ───
+  trialEndsAt   DateTime?              // set to createdAt + 7 days on signup
+  onboardingEmails OnboardingEmail[]
+
   asanaToken    String?   // Per-user Asana Personal Access Token
 
   soundEnabled  Boolean   @default(true)
@@ -213,4 +217,19 @@ model ContactMessage {
   email     String
   message   String
   createdAt DateTime @default(now())
+}
+
+// ─── Onboarding Email Log ───────────────────────────
+// Prevents double-sending trial sequence emails
+
+model OnboardingEmail {
+  id        String   @id @default(cuid())
+  userId    String
+  emailType String   // 'welcome' | 'day2' | 'day5' | 'day7'
+  sentAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, emailType])
+  @@index([userId])
 }

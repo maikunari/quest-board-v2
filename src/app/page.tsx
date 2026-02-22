@@ -84,7 +84,7 @@ export default function LandingPage() {
             {/* Arrow pointing up */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 border-8 border-transparent border-b-violet-400/40 dark:border-b-violet-500/30" />
             <p className="font-pixel text-[11px] leading-loose text-violet-700 dark:text-violet-200 sm:text-[13px]">
-              &ldquo;Every great adventure begins<br className="hidden sm:block" /> with a single quest...&rdquo;
+              &ldquo;Tired of todo lists that make you<br className="hidden sm:block" /> feel guilty? You&apos;re in the right place.&rdquo;
             </p>
           </div>
         </motion.div>
@@ -106,7 +106,7 @@ export default function LandingPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
         >
-          Turn your boring tasks into epic adventures
+          Productivity for brains that need more than a checkbox
         </motion.p>
 
         <motion.p
@@ -115,8 +115,9 @@ export default function LandingPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
         >
-          Earn XP, build streaks, rise through the ranks. The gamified productivity
-          tool built for people who actually want to get things done.
+          Built by someone with ADHD who couldn&apos;t stick with any task manager ever made.
+          XP, streaks, and ranks aren&apos;t gimmicks — they&apos;re the dopamine hits your brain
+          actually needs to get moving.
         </motion.p>
 
         {/* CTA — skeuomorphic (toggle to btn-flat / btn-flat-outline to revert) */}
@@ -191,6 +192,69 @@ export default function LandingPage() {
       </motion.section>
 
       {/* ════════════════════════════════════════════════════════════════════
+          SECTION 0 — Why This Exists (ADHD Origin Story)
+      ════════════════════════════════════════════════════════════════════ */}
+      <section className="px-4 py-24 border-t border-slate-200 dark:border-white/[0.03]">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerContainer}
+        >
+          <motion.p variants={fadeInUp} className="mb-3 font-pixel text-[10px] text-violet-600 dark:text-violet-400 uppercase tracking-widest">
+            The Origin Story
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="mb-6 font-pixel text-2xl text-slate-900 dark:text-white md:text-3xl" style={{ textShadow: '0 0 20px rgba(139,92,246,0.3)' }}>
+            Built for Brains Like Ours
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="mb-4 text-slate-600 dark:text-gray-400 leading-relaxed text-base">
+            I have ADHD. I&apos;ve tried every productivity app out there — and they all
+            share the same fatal flaw: <span className="text-slate-800 dark:text-white font-semibold">they&apos;re boring.</span> A plain list of tasks
+            does nothing for a brain that runs on novelty and reward. You open the app,
+            feel vaguely guilty, and close it again.
+          </motion.p>
+          <motion.p variants={fadeInUp} className="mb-10 text-slate-600 dark:text-gray-400 leading-relaxed text-base">
+            Quest Board is what happens when you stop fighting your brain and start working
+            with it. The XP, the streaks, the ranks — they&apos;re not just decoration.
+            They&apos;re the dopamine loop your brain needs to actually <em>start</em>, and keep going.
+          </motion.p>
+          <motion.div
+            variants={staggerContainer}
+            className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+          >
+            {[
+              {
+                icon: '🧠',
+                title: 'Quests, Not Tasks',
+                desc: 'Framing matters. "Quest: Email the client" hits different than "Task: Email the client." Your brain knows the difference.',
+              },
+              {
+                icon: '⚡',
+                title: 'Instant Dopamine',
+                desc: 'Every completion triggers XP, level-ups, and streaks. Real feedback loops — not another grey checkbox.',
+              },
+              {
+                icon: '🚫',
+                title: 'Zero Guilt Trips',
+                desc: "This app doesn't shame you for being behind. It celebrates every win, no matter how small. Miss a day? Reset and go again.",
+              },
+            ].map((card) => (
+              <motion.div
+                key={card.title}
+                variants={fadeInUp}
+                className="rounded-2xl border border-violet-200 dark:border-violet-900/40 bg-white dark:bg-[#0d0920] p-6 text-left shadow-sm dark:shadow-none"
+              >
+                <span className="text-3xl">{card.icon}</span>
+                <h3 className="mt-3 mb-2 font-pixel text-[11px] text-slate-800 dark:text-white">{card.title}</h3>
+                <p className="text-xs leading-relaxed text-slate-500 dark:text-gray-400">{card.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════════
           SECTION 1 — Track Your Daily Quests
       ════════════════════════════════════════════════════════════════════ */}
       <SageSection
@@ -201,16 +265,18 @@ export default function LandingPage() {
         quote="&ldquo;Even the mightiest hero needs a quest log. Write it. Do it. Conquer it.&rdquo;"
       >
         <p className="mb-6 text-slate-600 dark:text-gray-400 leading-relaxed">
-          Transform every task into a quest. Main quests, side quests, and daily
-          challenges — structured just like your favourite RPG. Complete them to earn
-          XP and unlock your next level.
+          Tasks overwhelm. Quests motivate. Structure your day like an RPG — main
+          quests for the big stuff, side quests for the extras, daily quests for
+          the habits your brain keeps forgetting. Each completion earns XP and
+          that little number going up?{' '}
+          <span className="text-slate-800 dark:text-white font-medium">Surprisingly powerful.</span>
         </p>
         <div className="grid grid-cols-2 gap-3">
           {[
             { icon: '⚔️', label: 'Main Quest', desc: 'High‑impact objectives' },
             { icon: '📜', label: 'Side Quest', desc: 'Useful extras' },
             { icon: '🔁', label: 'Daily Quest', desc: 'Repeatable habits' },
-            { icon: '⭐', label: 'XP Rewards', desc: 'Visible progress' },
+            { icon: '⭐', label: 'XP Rewards', desc: 'Dopamine, delivered' },
           ].map((item) => (
             <div key={item.label} className="rounded-xl border border-violet-200 dark:border-violet-900/40 bg-white dark:bg-[#110d24] p-4 shadow-sm dark:shadow-none">
               <span className="text-2xl">{item.icon}</span>
@@ -232,8 +298,11 @@ export default function LandingPage() {
         accent="amber"
       >
         <p className="mb-6 text-slate-600 dark:text-gray-400 leading-relaxed">
-          Daily streaks multiply your XP. Miss a day and the chain breaks. The longer
-          your streak, the greater the multiplier — and the greater the glory.
+          ADHD brains struggle with consistency — not because of laziness, but because
+          willpower is the wrong tool. Streaks give you something better: a{' '}
+          <span className="text-slate-800 dark:text-white font-medium">visual chain you don&apos;t want to break.</span>{' '}
+          Miss a day and the fire goes out. Keep going and the XP multiplier climbs.
+          It works because the stakes feel real.
         </p>
         <div className="space-y-3">
           {[
@@ -384,8 +453,9 @@ export default function LandingPage() {
             &ldquo;No hero conquers alone. Join a guild, share your board, rise together.&rdquo;
           </p>
           <p className="mb-10 text-slate-600 dark:text-gray-400 leading-relaxed">
-            Free forever for solo adventurers. Upgrade to unlock unlimited integrations,
-            streak freezes, and guild mode for teams.
+            Try everything free for 7 days — no restrictions, no watered-down version.
+            After that, pick the plan that fits. Solo adventurer or guild leader, we&apos;ve
+            got you covered.
           </p>
 
           {/* Section CTAs — skeuomorphic (swap to btn-flat / btn-flat-outline to revert) */}
@@ -404,7 +474,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <p className="mt-6 text-xs text-slate-400 dark:text-gray-600">Free forever · No credit card required · 342 adventurers active</p>
+          <p className="mt-6 text-xs text-slate-400 dark:text-gray-600">7-day free trial · No credit card required · Cancel anytime · 342 adventurers active</p>
         </motion.div>
       </section>
 
@@ -414,7 +484,7 @@ export default function LandingPage() {
       <footer className="border-t border-violet-200 dark:border-violet-900/30 px-4 py-10 text-center">
         <div className="mx-auto max-w-4xl">
           <div className="mb-4 font-pixel text-[10px] text-violet-500 dark:text-violet-500">⚔️ QUEST BOARD ⚔️</div>
-          <p className="mb-6 text-xs text-slate-500 dark:text-gray-600 italic">Built by adventurers, for adventurers.</p>
+          <p className="mb-6 text-xs text-slate-500 dark:text-gray-600 italic">Built by an ADHD brain, for every brain that needed more than a checkbox.</p>
           <div className="flex justify-center gap-8 text-xs text-slate-500 dark:text-gray-600">
             <Link href="/pricing" className="hover:text-slate-700 dark:hover:text-gray-400 transition-colors">Pricing</Link>
             <Link href="/docs"    className="hover:text-slate-700 dark:hover:text-gray-400 transition-colors">Docs</Link>
